@@ -18,12 +18,11 @@ class GameModelView{
 } 
 
 export class Game{
-      
+    
     constructor( gameLayerId ){ 
         let gameLayer = document.getElementById(gameLayerId);
         if(gameLayer == null)
-            alert("No Game Layer Was Found by id ==[" + gameLayerId+ "]");
-
+            alert("No Game Layer Was Found by id ==[" + gameLayerId+ "]"); 
         this.model = new GameModelView(gameLayer); 
     }
     
@@ -66,16 +65,12 @@ export class Game{
                 }    
             ]`;
             let obj = JSON.parse(json);
- 
-            
+  
             obj.forEach( objCard => {
                 let card =  Card.fromJSON( JSON.stringify(objCard) );
                 console.log(card);
                 player.giveCard( card );
-            });
-            
-
-        });
-
+            }); 
+        }); 
     } 
 }

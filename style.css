@@ -47,5 +47,8 @@
 .Layer {
   pointer-events: none;
 }
+.Layer > * {
+  pointer-events: all;
+}
 
 /*# sourceMappingURL=style.css.map */

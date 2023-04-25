@@ -53,4 +53,8 @@
 
 .Layer{
     pointer-events: none;
+
+    & > *{
+        pointer-events: all;
+    }
 }

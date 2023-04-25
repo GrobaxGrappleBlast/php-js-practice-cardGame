@@ -1,79 +1,16 @@
 import { Card , Dock , Constants} from './main.js'
+ 
+class BoardSide_model { 
 
-/*class Side {  
-    public static function getEmptySideHTML( $isFlipped = false ){
-        $rtr = '<table class="'.CARDS_DECK_TABLE_CLASS.'">';
-        $methods_to_call = array('getAttackRow', 'getDefenseRow');
-        if($isFlipped){
-            for ($i=0; $i < count($methods_to_call); $i++) { 
-                $method = $methods_to_call[$i];
-                $rtr .= self::$method();
-            }
-        }
-        else{
-            for ($i= count($methods_to_call) -1 ; $i >= 0 ; $i--) { 
-                $method = $methods_to_call[$i];
-                $rtr .= self::$method();  
-            }
-        }
-        $rtr .= '</table>';
-        $rtr .= '
-                <div class="'.CARDS_HANDDECK_TABLE_CLASS.'"> 
-                '. self::getHandDeckRow() .'
-                </div>';
-        return $rtr;
-    } 
-    // Board Docks
-    private static function getAttackRow(){
-        $rtr = "<tr>"; 
-        for ( $i=0 ; $i < CARDS_PER_ROW ; $i++ ) { 
-            $rtr .= self::createDock( CARDS_OFFE_CLASS );
-        } 
-        $rtr .= "</tr>";
-        return $rtr;
-    }
-    private static function getDefenseRow(){
-        $rtr = "<tr>";
-        for ( $i=0 ; $i < CARDS_PER_ROW ; $i++ ) { 
-            $rtr .= self::createDock( CARDS_DEFE_CLASS );
-        } 
-        $rtr .= "</tr>";
-        return $rtr;
-    }
-    private static function createDock( $extraClass ){
-        return "
-            <td class='" . DOCK_CLASS . " " . $extraClass . " " . CARD_CLASS . "'>
-            </td>
-        ";
-    } 
-
-
-    private static function getHandDeckRow(){
-        $rtr = "";
-        for ( $i=0 ; $i < CARDS_PER_ROW ; $i++ ) { 
-            $rtr .= self::createCard( CARDS_HAND_CLASS );
-        } 
-        return $rtr;
-    }
-    private static function createCard($extraClass){
-        return "
-        <div class='" . $extraClass . " " . CARD_CLASS . "'>
-        </div>
-        ";
-    } 
-}*/
-
-class BoardSide_model{
-    
     offensive_row;
     defensive_row;
-    handCards;
+    handCards; 
 
     constructor( slots ){
         this.offensive_row = new Array(slots);
         this.defensive_row = new Array(slots);
         this.handCards = [];
-    }
+    } 
 
     static fromJSON(json, slots=8){
         let rtr = new BoardSide_model(slots);
@@ -104,21 +41,43 @@ class BoardSide_model{
         }
         
         return rtr;
+    } 
+ 
+    rowjson(arr){
+        let rtr = "";
+        let first = true;
+        arr.forEach  ( dock => {
+            if(first){
+                first = false;
+                rtr += ",\n";
+            }
+            rtr += dock.toJSON();
+        }); 
+    }
+
+    toJSON(){
+ 
+        return `
+        {
+          "offensive_row":[`+ rowjson(this.offensive_row) +`],
+          "defensive_row":[`+ rowjson(this.defensive_row) +`],
+          "handCards":[`+ rowjson(this.handCards) +`]
+        }
+        `
     }
 
     addToHand(Card){
         this.handCards.push(Card);
     }
 }
-class BoardSide_View{
 
+class BoardSide_View { 
     container;
     board ;
     tbody   ;    
     offensive_row;
     defensive_row; 
-    hand ;
-
+    hand ; 
     constructor( parent ){
          
         // Create elements
@@ -145,8 +104,7 @@ class BoardSide_View{
          
         if(parent != null)
             parent.appendChild(this.container)
-    }
-
+    } 
     render(model){
         console.log("rendering BoardSide")
 
@@ -160,48 +118,37 @@ class BoardSide_View{
         model.defensive_row.forEach( dock =>{
             dock.attachToParent(this.defensive_row);
         }) 
-    } 
-
-    revealHand(){
-        console.error("revealHand NOT implemented");
-    }
-    hideHand(){
-        console.error("hideHand NOT implemented")
-    }
-
+    }  
     addToHand(card){
         card.dockAt(this.hand);
-    }
+    } 
+} 
 
-    dragFromHand(element){
-        console.error("dragFromHand NOT implemented")
-    }
-}
-
-export class BoardSide{
-
+export class BoardSide { 
+    
     model;
-    view ;
+    view ; 
 
-    constructor(  layer , slots, json = null){
-        if(json ==null){
+    constructor(  layer , slots, json = null){ 
+
+        if( json == null ){
             this.model = BoardSide_model.fromJSON(json);
         }else{
             this.model = new BoardSide_model(slots);
         }
-        this.view = new BoardSide_View(layer);
-    } 
+        this.view = new BoardSide_View(layer);  
+        
+    }  
 
+    toJSON(){
+        return this.model.toJSON();
+    }
+    
     render(){
         this.view.render(this.model);
-    }  
-    revealHand(){
-        this.view.revealHand();
-    }
-    hideHand(){
-        this.view.hideHand();
-    } 
+    }   
+
     addToHand(card){
         this.view.addToHand(card); 
     }
-}
+}   

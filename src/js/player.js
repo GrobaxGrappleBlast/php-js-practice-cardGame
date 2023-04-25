@@ -24,8 +24,7 @@ class PlayerView{
 
     }
 }
-
-
+ 
 export class Player{
  
     model;
@@ -34,17 +33,21 @@ export class Player{
     constructor(parent, rounds){
         this.model = new PlayerModel(parent,rounds);
     }
+    
     setActive(){
 
     }
+    
     setPassive(){
 
     } 
+
     giveCards(cards){ 
         cards.forEach(card => {
             this.model.board.addToHand(card);
         }); 
     }
+    
     giveCard(card){  
         this.model.board.addToHand(card); 
     }

@@ -1,13 +1,13 @@
-import { Card, Constants } from './main.js';
+import { Card, Constants ,  DraggingHandler} from './main.js';
 
-class DockModel{ 
- 
-    card;  
+class DockModel{  
+    card; 
     static fromJSON(json){
+        let model = new DockModel();
         let obj = JSON.parse(json);
+        model.card = obj.card; 
         this.card = Card.fromJSON(obj.card);
     }
-
 } 
 class DockView{ 
 
@@ -40,25 +40,16 @@ export class Dock {
         }
         
         this.view = new DockView();
-        this.view.render(this.model)
+        this.view.render(this.model); 
 
-        this.view.element.addEventListener('dragover', (event) => {
-            event.preventDefault(); // Required to allow a drop
-        });
-        
-        this.view.element.addEventListener('drop', (event) => {
-            event.preventDefault();
-            let cardJson = event.dataTransfer.getData('card');
-            let card = Card.fromJSON(cardJson);
-            card.dockAt(this);
-        });
+        DraggingHandler.addDockingDragListeners(this);
     }
 
     static fromJSON(json){
         this.model = DockModel.fromJSON(json);
     }
 
-    toJson(){
+    toJSON(){
         return `
             {
                 type:"dock"` + this.model.card!=null ?`,
@@ -70,6 +61,10 @@ export class Dock {
 
     attachToParent(parent){
         this.view.attachToParent(parent);
+    } 
+
+    asHTML(){
+       return this.view.element;
     }
 }
 

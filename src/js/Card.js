@@ -1,20 +1,21 @@
 
-import {Constants} from './main.js'
+import {Constants, DraggingHandler} from './main.js'
 
 class CardModel{  
+    
     type;
     value;
     command; 
     static fromJSON(json){ 
         let obj         = JSON.parse(json);
-        let card        = new CardModel();
+            let card        = new CardModel();
         card.type       = obj.type;
         card.value      = obj.value;
         card.command    = obj.command
         return card;
     }
 
-    toJson(){
+    toJSON(){
         return `
         {
             "type"      : "`+this.type+`"     ,
@@ -24,7 +25,6 @@ class CardModel{
         `
     }
 }
-
 class CardView{
     element = document.createElement("div");
 
@@ -40,13 +40,12 @@ class CardView{
         `; 
     }
 }
-
-export class Card {
-
+export class Card { 
+    dock  ;
     model ;
-    view  ;
-
+    view  ; 
     constructor(json = null){
+        
         if(json == null){
             this.model = new CardModel();
         }else{
@@ -54,26 +53,30 @@ export class Card {
         }
         
         this.view = new CardView();
-        this.view.render(this.model)
-
-
-        // Dragging 
-        this.view.element.draggable = true;
-        this.view.element.addEventListener('dragstart', (event) => {
-            console.log("DRAG");
-            event.dataTransfer.setData('text/plain', ''); // Required for Firefox
-            event.dataTransfer.setDragImage(event.target, 10, 10); // Optional: customize the drag image
-            event.dataTransfer.setData('card', this.model.toJson() ); // Pass the CardModel object
-            // Any additional code you want to execute when dragging starts
-        }); 
+        this.view.render(this.model);
+   
+        DraggingHandler.addCardDragListeners(this);
     }
 
     static fromJSON(json){
         let card = new Card();
         card.model = CardModel.fromJSON(json);
         return card;
+    } 
+
+    toJSON(){
+        this.model.toJSON();
     }
- 
+    
+    dockAt(dock){
+        this.dock = dock ;
+        this.dock.appendChild(this.view.element);
+    }
+
+    asHTML(){
+        return this.view.element;
+     }
+
 }
 
  
