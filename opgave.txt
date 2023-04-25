@@ -1,0 +1,50 @@
+Hej Hans
+
+
+Hermed en opgave, udtænkt af Allan:
+
+
+
+Her er en opgave, som inviterer til objektorienteret design.
+
+PHP OPGAVE: Kortspil i browser
+
+Version 1: Én spiller mod computer
+Version 2: To spillere sammen mod to computere
+Version 3: To spillere mod hinanden
+Version 4: Tre spillere mod hinanden
+
+Hver spiller starter med at indtaste sit navn.
+Hvert spil består af n runder.
+Der findes to slags kort: offensive og defensive
+Hver spiller får n offensive kort og n defensive kort
+Hver runde spilles to kort, ét offensivt og ét defensivt.
+Hver spiller har m hitpoints.
+Offensive kort kan være relative eller absolutte
+- reducer modstanders hitpoints med 10%
+- reducer modstanders hitpoints med 10
+Det samme kan defensive kort
+- helbred dig selv/medspiller for 10 hitpoints, dog max m
+- helbred dig selv/medspiller for 10% hitpoints, dog max m
+- reducer skade fra næste slag med 10
+- reducer skade fra næste slag med 10%
+Kortene kan virke med det samme eller over flere runder.
+F.eks. reducer modstanders hitpoints med 10 i tre runder.
+
+En spiller taber hvis hitspoints når 0.
+Et hold taber hvis en af spillernes hitspoints når 0.
+
+Generer tilfældige kort dynamisk.
+Anlæg strategi for tilfældige kort.
+To strategier når:
+a) alle spillere får tilfældige kort
+b) alle spillere får de samme kort (som dog stadig er tilfældige).
+(opgaven er at kode strategien, det er mindre væsentligt om strategien fører til sejr)
+
+Generer et sæt kort og gem dem i en database.
+Tildel hvert kort en værdi ud fra en vurdering af hvor stærkt kortet er.
+Giv hver spiller tilfældige kort fra sættet som har samme samlet værdi.
+
+Lad spillerne vælge sit eget kortsæt.
+
+Hvis der er brug for javascript, så udelukkende native.

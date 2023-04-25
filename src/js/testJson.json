@@ -1,0 +1,32 @@
+[
+    {
+        "type"    : "anyType",
+        "value"   : "1",
+        "command" : "1"
+    },
+    {
+        "type"    : "anyType",
+        "value"   : "2",
+        "command" : "1"
+    },
+    {
+        "type"    : "anyType",
+        "value"   : "3",
+        "command" : "1"
+    },
+    {
+        "type"    : "anyType",
+        "value"   : "4",
+        "command" : "1"
+    },
+    {
+        "type"    : "anyType",
+        "value"   : "5",
+        "command" : "1"
+    },
+    {
+        "type"    : "anyType",
+        "value"   : "6",
+        "command" : "1"
+    }    
+]

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Drag and Drop Example</title>
+	<style>
+		.card {
+			display: inline-block;
+			width: 100px;
+			height: 150px;
+			border: 1px solid black;
+			padding: 10px;
+			margin: 10px;
+			text-align: center;
+			cursor: pointer;
+		}
+		.container {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			height: 500px;
+			border: 1px solid black;
+			padding: 10px;
+			margin: 10px;
+		}
+		.selected {
+			border-color: blue;
+		}
+	</style>
+</head>
+<body>
+	<div id="hand">
+		<div class="card">Card 1</div>
+		<div class="card">Card 2</div>
+		<div class="card">Card 3</div>
+		<div class="card">Card 4</div>
+		<div class="card">Card 5</div>
+	</div>
+	<div id="board" class="container"></div>
+	<script>
+		var dragged;
+
+		/* Event listeners for drag and drop */
+		document.addEventListener("dragstart", function(event) {
+			dragged = event.target;
+			event.target.classList.add("selected");
+		});
+
+		document.addEventListener("dragend", function(event) {
+			event.target.classList.remove("selected");
+		});
+
+		document.addEventListener("dragover", function(event) {
+			event.preventDefault();
+		});
+
+		document.addEventListener("dragenter", function(event) {
+			if (event.target.className == "container") {
+				event.target.style.border = "dashed 2px black";
+			}
+		});
+
+		document.addEventListener("dragleave", function(event) {
+			if (event.target.className == "container") {
+				event.target.style.border = "solid 1px black";
+			}
+		});
+
+		document.addEventListener("drop", function(event) {
+			event.preventDefault();
+			if (event.target.className == "container") {
+				event.target.style.border = "solid 1px black";
+				event.target.appendChild(dragged);
+			}
+		});
+	</script>
+</body>
+</html>

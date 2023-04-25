@@ -1,0 +1,18 @@
+{
+    "phpserver.phpPath": "C:/Wamp.NET/bin/2-php_8.1.2_x64/php.exe",
+    "php.executablePath": "C:/Wamp.NET/bin/2-php_8.1.2_x64/php.exe",
+    "php.validate.executablePath": "C:/Wamp.NET/bin/2-php_8.1.2_x64/php.exe",
+    "php.server": {
+        "localhost": {
+            "host": "localhost",
+            "port": 80,
+            "baseUri": "",
+            "debug": {
+                "log": true,
+                "maxChildren": 0,
+                "maxDepth": 1,
+                "maxData": 1024
+            }
+        }
+    }
+}

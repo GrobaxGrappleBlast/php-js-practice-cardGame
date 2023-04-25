@@ -1,0 +1,8 @@
+Offensive kort kan være relative eller absolutte
+- reducer modstanders hitpoints med 10%
+- reducer modstanders hitpoints med 10
+Det samme kan defensive kort
+- helbred dig selv/medspiller for 10 hitpoints, dog max m
+- helbred dig selv/medspiller for 10% hitpoints, dog max m
+- reducer skade fra næste slag med 10
+- reducer skade fra næste slag med 10%
