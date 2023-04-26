@@ -1,46 +1,58 @@
 import { Card , Dock , BoardSide, Constants } from './main.js'
 
 class PlayerModel{
+
     hitPoints = 100;
     player_name = "Name Here";
-    board // = new BoardSide();
+    board; 
 
-    constructor(GameLayer, rounds){
-        console.log("Creating Player");
-        this.board = new BoardSide(GameLayer, rounds);
+    constructor(rounds){ 
+        this.board = new BoardSide(rounds);
         this.board.render();
-    }
+    }   
 }
 
 class PlayerView{
 
-    Hand;
+    PlayerContainer;
+    PlayerBadge;
+    healthBar;
+    CardsContainer;
 
-    constructor(model){
+    constructor(){ 
+    } 
+    render(model){ 
+        //if(this.PlayerContainer != null)
+        //    this.PlayerContainer.innerHTML = "";
+        this.PlayerContainer = document.createElement("div");
+        this.PlayerBadge     = document.createElement("div");
+        this.CardsContainer  = document.createElement("div");
 
-    }
+        this.PlayerContainer.classList.add("PlayerContainer");
+        this.PlayerBadge    .classList.add("PlayerBadge");
+        this.CardsContainer .classList.add("PlayerBoardContainer");
 
-    render(){
-
+        this.PlayerContainer.appendChild(this.PlayerBadge);
+        this.PlayerContainer.appendChild(this.CardsContainer);
+        this.CardsContainer .appendChild(model.board.asHTML())
+        console.log("STOP HER");
     }
 }
  
-export class Player{
- 
+export class Player{ 
     model;
     view;
 
     constructor(parent, rounds){
         this.model = new PlayerModel(parent,rounds);
+        this.view = new PlayerView();
+        this.view.render(this.model);
+        parent.appendChild(this.asHTML());
     }
-    
-    setActive(){
 
+    asHTML(){
+        return this.view.PlayerContainer;
     }
-    
-    setPassive(){
-
-    } 
 
     giveCards(cards){ 
         cards.forEach(card => {
@@ -50,5 +62,10 @@ export class Player{
     
     giveCard(card){  
         this.model.board.addToHand(card); 
+    }
+
+
+    PlayCard(hand_index){
+
     }
 }

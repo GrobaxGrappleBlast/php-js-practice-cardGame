@@ -14,48 +14,7 @@
         CreateJavaScriptConstants();
     ?>
     
-    <script>
-        /*/ TODO FINISH THIS CODE AND TEST.     
-        document.addEventListener("dragover", function(event) {
-			event.preventDefault();
-		});
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // Draging  -- Draging  -- Draging  -- Draging  --
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        let dragged = null ;
-        // when the event starts, take the element, remove it from its parent, and add to free elements on the screen
-        // then ensure that it follows the mouse cursor around. 
-        document.addEventListener("dragstart", function(event) {
-            // if the class drag is in the elements classes;
-            if (event.target.classList.contains( <?php echo GRAP_CLASS ?> ) ) {
-                dragged = event.target;
-			    event.target.classList.add(<?php echo DRAG_CLASS ?>);
-			}
-		});
-
-        // when the dragging ends, ensure that either the Drop happens, OR return to parent, and. 
-		document.addEventListener("dragend", function(event) {
-            // if the class drag is in the elements classes;
-            if (event.target.classList.contains( <?php echo GRAP_CLASS ?> ) ) {
-                dragged = event.target;
-			    event.target.classList.add(<?php echo DRAG_CLASS ?>);
-			} 
-		});
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // Docking  -- Docking  -- Docking  -- Docking  -- 
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-		document.addEventListener("drop", function(event) {
-			event.preventDefault();
-			if (event.target.className == <?php echo DOCK_CLASS ?>) {
-				event.target.style.border = "solid 1px black";
-				event.target.appendChild(dragged);
-			}
-		});
-        */
-    </script>
-     
+    
     <script>
 
         var game_has_started = false;
@@ -81,7 +40,7 @@
     <?php
     function createStartForm(){
         return '
-        <form method="post" action="">
+        <form method="post" action="" class="InputForm" >
             <label for="player1">player 1</label>
             <input type="text" id="player1" name="player1"><br>
             <input type="submit" name="NewGame" value="Start Game">
@@ -95,9 +54,7 @@
         ';
     }
     echo '
-    <div id="'.LAYER_BOARD_CLASS         .'" class="'.COMMON_LAYER_CLASS.'"></div>
-    <div id="'.LAYER_VFX_CLASS           .'" class="'.COMMON_LAYER_CLASS.'"></div>
-    <div id="'.LAYER_UI_Messages         .'" class="'.COMMON_LAYER_CLASS.'"></div>
+    <div id="'.LAYER_BOARD_CLASS         .'" class="'.COMMON_LAYER_CLASS.'"></div> 
     <div id="'.LAYER_TOPMessages         .'" class="'.COMMON_LAYER_CLASS.'">'. (!$GameRunning ?   createStartForm() : createResetButton()) .'</div>
     '; 
     ?>

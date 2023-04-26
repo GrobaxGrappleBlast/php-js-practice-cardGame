@@ -2,53 +2,59 @@
   list-style: none;
 }
 
-.Layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.Board {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: space-around;
-  flex-direction: column-reverse;
-}
-.Board .DeckTable {
-  margin: auto;
-}
-
-.DeckHandTable {
-  margin: auto;
-  display: flex;
-  justify-content: center;
-  height: 100px;
-}
-.DeckHandTable .BasicCard {
-  margin-left: -30px;
-  transform-origin: center center;
-  transform: translate(0px, 0px);
-}
-
-.BoardDeck {
-  background-color: darkcyan;
-}
-
 .BasicCard {
-  height: 100px;
-  width: 80px;
+  aspect-ratio: 8;
+  object-fit: fill;
   border: 2px solid rgba(0, 0, 0, 0.0509803922);
   pointer-events: all;
 }
 
 .Layer {
   pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 .Layer > * {
   pointer-events: all;
+}
+
+.InputForm {
+  width: 250px;
+  height: 300px;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.1882352941);
+  margin: auto;
+  margin-top: 50px;
+  padding: 25px;
+  font-size: 20px;
+}
+
+.Board {
+  width: 100%;
+  height: 100%;
+}
+
+.PlayerContainer {
+  width: 100%;
+  height: 200px;
+}
+
+.PlayerBadge {
+  float: left;
+  width: 200px;
+  height: 100%;
+  background-color: brown;
+}
+
+.PlayerBoardContainer {
+  float: left;
+  height: 100%;
+  width: calc(100% - 200px);
+  background-color: yellow;
 }
 
 /*# sourceMappingURL=style.css.map */

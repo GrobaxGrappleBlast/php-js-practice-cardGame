@@ -68,7 +68,6 @@ export class Game{
   
             obj.forEach( objCard => {
                 let card =  Card.fromJSON( JSON.stringify(objCard) );
-                console.log(card);
                 player.giveCard( card );
             }); 
         }); 

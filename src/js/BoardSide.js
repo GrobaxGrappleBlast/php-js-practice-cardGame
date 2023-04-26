@@ -78,21 +78,23 @@ class BoardSide_View {
     offensive_row;
     defensive_row; 
     hand ; 
-    constructor( parent ){
+    constructor( ){
          
         // Create elements
         this.container  = document.createElement("div");
         this.hand       = document.createElement("div");
-        this.board      = document.createElement("table");
+        this.board      = document.createElement("div");
         // create elements for the board;
-        this.tbody = document.createElement("tbody");
-        this.offensive_row = document.createElement("tr");
-        this.defensive_row = document.createElement("tr");
+        this.tbody = document.createElement("div");
+        this.offensive_row = document.createElement("div");
+        this.defensive_row = document.createElement("div");
 
         // give elements classes,
         this.board.classList.add(Constants.CARDS_DECK_TABLE_CLASS); 
         this.offensive_row.classList.add("offensiveRow"); 
         this.defensive_row.classList.add("defensiveRow"); 
+        this.offensive_row.classList.add("cardRow"); 
+        this.defensive_row.classList.add("cardRow"); 
         this.hand.classList.add(Constants.CARDS_HANDDECK_TABLE_CLASS);
 
         // append Elements
@@ -101,13 +103,12 @@ class BoardSide_View {
         this.tbody.appendChild(this.offensive_row)
         this.tbody.appendChild(this.defensive_row)
         this.container.appendChild(this.hand);
-         
-        if(parent != null)
-            parent.appendChild(this.container)
+
+        
+
     } 
     render(model){
-        console.log("rendering BoardSide")
-
+       
         this.offensive_row.innerHTML="";
         this.defensive_row.innerHTML="";
 
@@ -118,6 +119,9 @@ class BoardSide_View {
         model.defensive_row.forEach( dock =>{
             dock.attachToParent(this.defensive_row);
         }) 
+
+        // css necesary attr
+        this.container.setAttribute('data-num-cards', this.offensive_row.length);
     }  
     addToHand(card){
         card.dockAt(this.hand);
@@ -129,16 +133,20 @@ export class BoardSide {
     model;
     view ; 
 
-    constructor(  layer , slots, json = null){ 
+    constructor( slots, json = null){ 
 
         if( json == null ){
             this.model = BoardSide_model.fromJSON(json);
         }else{
             this.model = new BoardSide_model(slots);
         }
-        this.view = new BoardSide_View(layer);  
+        this.view = new BoardSide_View();  
         
     }  
+
+    asHTML(){
+        return this.view.container;
+    }
 
     toJSON(){
         return this.model.toJSON();
@@ -151,4 +159,13 @@ export class BoardSide {
     addToHand(card){
         this.view.addToHand(card); 
     }
+
+    activate(){
+
+    }
+
+    showHand(){
+
+    }
+
 }   

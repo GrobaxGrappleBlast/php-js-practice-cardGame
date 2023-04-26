@@ -14,7 +14,6 @@ class DockView{
     element = document.createElement("td"); 
     
     constructor(){
-        console.log(Constants.CARD_CLASS)
         this.element.classList.add(Constants.CARD_CLASS); 
         this.element.classList.add(Constants.DOCK_CLASS); 
     }
