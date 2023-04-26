@@ -9,9 +9,7 @@
     <?php
         // dependencies; 
         require_once 'src/constants.php'; 
-        require_once 'PlayerBoard.php';   
-        // Writing the constants as Javascript constants
-        CreateJavaScriptConstants();
+        require_once 'PlayerBoard.php';    
     ?>
     
     
@@ -42,7 +40,11 @@
         return '
         <form method="post" action="" class="InputForm" >
             <label for="player1">player 1</label>
-            <input type="text" id="player1" name="player1"><br>
+            <input type="text" id="player1" name="player1" value="player1"><br>
+          
+            <label for="player2">player 2</label>
+            <input type="text" id="player2" name="player2" value="player2"><br>
+          
             <input type="submit" name="NewGame" value="Start Game">
         </form>';
     } 
@@ -58,13 +60,21 @@
     }
 
     echo ' <div id="'.LAYER_BOARD_CLASS         .'" class="'.COMMON_LAYER_CLASS.'"> ';
-    echo createPlayerBoard("Player1",8);
-    echo createPlayerBoard("Player2",8);  
+    if($GameRunning){
+        echo createPlayerBoard("Player1",8);
+        echo createPlayerBoard("Player2",8);  
+    }
     echo '</div>
     <div id="'.LAYER_TOPMessages         .'" class="'.COMMON_LAYER_CLASS.'">'. (!$GameRunning ?   createStartForm() : createResetButton()) .'</div>
     '; 
     ?>
 
-       
+    <script type="module">
+        import { Game } from './src/js/main.js';
+
+        let game = Game.getInstance();
+        game.start();
+
+    </script>
 </body>
 </html>

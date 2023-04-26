@@ -3,24 +3,32 @@ import {Constants, DraggingHandler} from './main.js'
 
 class CardModel{  
     
-    type;
-    value;
-    command; 
+    target;
+    damage; 
+    rounds;
+    cardType;
+    cardScale;
+
     static fromJSON(json){ 
+ 
         let obj         = JSON.parse(json);
-            let card        = new CardModel();
-        card.type       = obj.type;
-        card.value      = obj.value;
-        card.command    = obj.command
+        let card        = new CardModel();
+        card.target      = obj.target      ;
+        card.damage      = obj.damage      ; 
+        card.rounds      = obj.rounds      ;
+        card.cardType    = obj.cardType    ;
+        card.cardScale   = obj.cardScale   ;
         return card;
     }
 
     toJSON(){
         return `
         {
-            "type"      : "`+this.type+`"     ,
-            "value"     : "`+this.value+`"    ,
-            "command"   : "`+this.command+`"  
+            "target   " : "${this.target      }",   
+            "damage   " : "${this.damage      }",   
+            "rounds   " : "${this.rounds      }",   
+            "cardType " : "${this.cardType    }",   
+            "cardScale" : "${this.cardScale   }"   
         }
         `
     }
@@ -33,10 +41,18 @@ class CardView{
         this.element.classList.add(Constants.CARD_CLASS); 
     }
 
-    render(model){
+    render(model){ 
+        if(model.cardType == 0)
+            this.element.classList.add("OFFENSIVE_CARD");
+        else 
+            this.element.classList.add("DEFENSIVE_CARD");
+ 
         this.element.innerHTML = `
-            <div class="Card_header" >`+ model.value   || "UNDEFINED" +`<div>
-            <div class="Card_effect" >`+ model.command || "UNDEFINED" +`<div>
+            ${model.target      },
+            ${model.damage      },
+            ${model.rounds      },
+            ${model.cardType    },
+            ${model.cardScale   },
         `; 
     }
 }
@@ -49,7 +65,7 @@ export class Card {
         if(json == null){
             this.model = new CardModel();
         }else{
-            this.model = fromJSON(json);
+            this.model = CardModel.fromJSON(json);
         }
         
         this.view = new CardView();
@@ -58,9 +74,8 @@ export class Card {
         DraggingHandler.addCardDragListeners(this);
     }
 
-    static fromJSON(json){
-        let card = new Card();
-        card.model = CardModel.fromJSON(json);
+    static fromJSON(json){ 
+        let card = new Card(json); 
         return card;
     } 
 

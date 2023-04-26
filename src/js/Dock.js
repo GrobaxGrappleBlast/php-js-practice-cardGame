@@ -48,15 +48,15 @@ export class Dock {
         this.model = DockModel.fromJSON(json);
     }
 
-    toJSON(){
-        return `
-            {
-                type:"dock"` + this.model.card!=null ?`,
-                card:` + this.model.card.toJson():""
-                `
-            }
-        `
-    }
+        toJSON(){
+            return `
+                {
+                    type:"dock"` + this.model.card!=null ?`,
+                    card:` + this.model.card.toJson():""
+                    `
+                }
+            `
+        }
 
     attachToParent(parent){
         this.view.attachToParent(parent);
@@ -64,6 +64,10 @@ export class Dock {
 
     asHTML(){
        return this.view.element;
+    }
+    
+    isOccupied(){
+        return this.model.card != null;
     }
 }
 

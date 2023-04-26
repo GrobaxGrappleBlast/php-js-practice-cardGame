@@ -10,8 +10,7 @@ class PlayerBoard_model {
         this.offensive_row = new Array(slots);
         this.defensive_row = new Array(slots);
         this.handCards = [];
-
-        console.log("STOP HER")
+ 
         for (let i = 0; i < this.offensive_row.length; i++) {
             this.offensive_row[i] = new Dock();
         }
@@ -96,8 +95,7 @@ class PlayerBoard_View {
     } 
     
     render(model){
-
-        console.log("DOCKING HERE");
+ 
         model.offensive_row.forEach( dock => {
             this.offensive_row.appendChild(dock.asHTML());
         });
@@ -105,7 +103,11 @@ class PlayerBoard_View {
         model.defensive_row.forEach( dock => {
             this.defensive_row.appendChild(dock.asHTML());
         });
- 
+
+
+        model.handCards.forEach( card => {
+            card.dockAt(this.hand);
+        });
     }
 
     addToHand(card){
@@ -134,8 +136,18 @@ export class PlayerBoard {
         return this.model.toJSON();
     } 
 
+    
+
+
     addToHand(card){
-        this.view.addToHand(card); 
+        this.model.addToHand(card);
+        this.view.addToHand(card);  
+    }
+
+    addCardsToHand(cards){
+        cards.forEach(card =>{
+            this.addToHand(card);
+        })
     }
  
 }   

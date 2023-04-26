@@ -4,8 +4,17 @@
 
 .BasicCard {
   aspect-ratio: 0.8;
-  border: 2px solid rgba(0, 0, 0, 0.0509803922);
+  border: 5px solid rgba(0, 0, 0, 0.0509803922);
+  border-radius: 5px;
   pointer-events: all;
+}
+
+.OFFENSIVE_CARD {
+  border: 5px solid #893030;
+}
+
+.DEFENSIVE_CARD {
+  border: 5px solid #2d4367;
 }
 
 .Layer {
@@ -41,9 +50,7 @@
 }
 
 .PlayerContainer {
-  background-color: gray;
   padding: 10px;
-  height: 300px;
 }
 .PlayerContainer .PlayerHealthBar {
   width: 100%;

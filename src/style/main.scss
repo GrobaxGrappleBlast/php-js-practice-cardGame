@@ -6,10 +6,19 @@
     //max-height:100px;
     //max-width:80px;
     aspect-ratio: 0.8; 
-    border: 2px solid #0000000d; 
+    border: 5px solid #0000000d; 
+    border-radius: 5px;
     pointer-events: all;
     //float:left;
 }
+.OFFENSIVE_CARD{
+    border: 5px solid #893030;
+}
+.DEFENSIVE_CARD{
+    border: 5px solid #2d4367;
+}
+
+
 .Layer{
     pointer-events: none; 
     & > *{
@@ -44,11 +53,7 @@
 
 
 .PlayerContainer{
-
-    background-color: gray;
-    padding:10px; 
-    height:300px;
-    
+    padding:10px;  
     .PlayerHealthBar{
         width: 100%;
         height:20px;
