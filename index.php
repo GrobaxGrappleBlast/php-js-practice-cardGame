@@ -9,7 +9,7 @@
     <?php
         // dependencies; 
         require_once 'src/constants.php'; 
-        
+        require_once 'PlayerBoard.php';   
         // Writing the constants as Javascript constants
         CreateJavaScriptConstants();
     ?>
@@ -53,21 +53,18 @@
         </form>
         ';
     }
-    echo '
-    <div id="'.LAYER_BOARD_CLASS         .'" class="'.COMMON_LAYER_CLASS.'"></div> 
+    function createPlayerBoard($playerid, $slots){
+        return ' '. generatePlayerAndBoard($playerid, $slots) .' ';
+    }
+
+    echo ' <div id="'.LAYER_BOARD_CLASS         .'" class="'.COMMON_LAYER_CLASS.'"> ';
+    echo createPlayerBoard("Player1",8);
+    echo createPlayerBoard("Player2",8);  
+    echo '</div>
     <div id="'.LAYER_TOPMessages         .'" class="'.COMMON_LAYER_CLASS.'">'. (!$GameRunning ?   createStartForm() : createResetButton()) .'</div>
     '; 
     ?>
 
-        <script type="module" >
-            import { Game } from '/src/js/Game.js';
-
-            if(game_has_started){
-                var boardClass = '<?php echo LAYER_BOARD_CLASS ?>';
-                var game = new Game( boardClass);
-                game.start(2 , 8);
-            }
-
-        </script>
+       
 </body>
 </html>

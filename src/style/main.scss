@@ -1,16 +1,15 @@
 
 *{
     list-style: none;
-}
+} 
 .BasicCard{
     //max-height:100px;
     //max-width:80px;
-    aspect-ratio: 8;
-    object-fit: fill;
+    aspect-ratio: 0.8; 
     border: 2px solid #0000000d; 
     pointer-events: all;
     //float:left;
-} 
+}
 .Layer{
     pointer-events: none; 
     & > *{
@@ -33,24 +32,31 @@
     margin-top: 50px;
     padding: 25px;
     font-size: 20px;
+} 
+
+.CardRow{
+    display: flex;
+    flex-wrap: nowrap;
+    & > div {
+    flex-basis: 25%;
+    }
 }
-.Board{
-    width:100%;
-    height: 100%;
-}
+
+
 .PlayerContainer{
-    width:100%;
-    height:200px;
-}
-.PlayerBadge{
-    float:left;
-    width:200px;
-    height:100%;
-    background-color: brown;
-}
-.PlayerBoardContainer{
-    float:left;
-    height:100%;
-    width:calc(100% - 200px);
-    background-color:yellow;
+
+    background-color: gray;
+    padding:10px; 
+    height:300px;
+    
+    .PlayerHealthBar{
+        width: 100%;
+        height:20px;
+        background-color: white;
+        border-radius: 2px;
+    }
+    .InnerHealthBar{
+        height:100%;
+        background-color: brown;
+    }
 }

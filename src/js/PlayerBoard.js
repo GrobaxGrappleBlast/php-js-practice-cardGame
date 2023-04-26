@@ -1,19 +1,29 @@
 import { Card , Dock , Constants} from './main.js'
  
-class BoardSide_model { 
+class PlayerBoard_model { 
 
     offensive_row;
     defensive_row;
     handCards; 
 
-    constructor( slots ){
+    constructor( slots = 1 ){
         this.offensive_row = new Array(slots);
         this.defensive_row = new Array(slots);
         this.handCards = [];
-    } 
 
+        console.log("STOP HER")
+        for (let i = 0; i < this.offensive_row.length; i++) {
+            this.offensive_row[i] = new Dock();
+        }
+
+        for (let i = 0; i < this.defensive_row.length; i++) {
+            this.defensive_row[i] = new Dock();
+        } 
+    } 
+    
+    /*
     static fromJSON(json, slots=8){
-        let rtr = new BoardSide_model(slots);
+        let rtr = new PlayerBoard_model(slots);
         let obj = JSON.parse(json == null ? "{}" : json);
       
         for (let i = 0; i < rtr.offensive_row.length; i++) {
@@ -64,85 +74,57 @@ class BoardSide_model {
           "handCards":[`+ rowjson(this.handCards) +`]
         }
         `
-    }
+    }*/
 
     addToHand(Card){
         this.handCards.push(Card);
     }
 }
 
-class BoardSide_View { 
+class PlayerBoard_View { 
+    
     container;
-    board ;
-    tbody   ;    
     offensive_row;
     defensive_row; 
     hand ; 
-    constructor( ){
-         
-        // Create elements
-        this.container  = document.createElement("div");
-        this.hand       = document.createElement("div");
-        this.board      = document.createElement("div");
-        // create elements for the board;
-        this.tbody = document.createElement("div");
-        this.offensive_row = document.createElement("div");
-        this.defensive_row = document.createElement("div");
 
-        // give elements classes,
-        this.board.classList.add(Constants.CARDS_DECK_TABLE_CLASS); 
-        this.offensive_row.classList.add("offensiveRow"); 
-        this.defensive_row.classList.add("defensiveRow"); 
-        this.offensive_row.classList.add("cardRow"); 
-        this.defensive_row.classList.add("cardRow"); 
-        this.hand.classList.add(Constants.CARDS_HANDDECK_TABLE_CLASS);
-
-        // append Elements
-        this.container.appendChild(this.board);
-        this.board.appendChild(this.tbody);
-        this.tbody.appendChild(this.offensive_row)
-        this.tbody.appendChild(this.defensive_row)
-        this.container.appendChild(this.hand);
-
-        
-
+    constructor( container, healthbar ,offensive_row, defensive_row, hand ){
+        this.container       = container       ;
+        this.offensive_row   = offensive_row   ;
+        this.defensive_row   = defensive_row   ; 
+        this.hand            = hand            ; 
     } 
+    
     render(model){
-       
-        this.offensive_row.innerHTML="";
-        this.defensive_row.innerHTML="";
 
+        console.log("DOCKING HERE");
         model.offensive_row.forEach( dock => {
-            dock.attachToParent(this.offensive_row);
+            this.offensive_row.appendChild(dock.asHTML());
         });
 
-        model.defensive_row.forEach( dock =>{
-            dock.attachToParent(this.defensive_row);
-        }) 
+        model.defensive_row.forEach( dock => {
+            this.defensive_row.appendChild(dock.asHTML());
+        });
+ 
+    }
 
-        // css necesary attr
-        this.container.setAttribute('data-num-cards', this.offensive_row.length);
-    }  
     addToHand(card){
         card.dockAt(this.hand);
     } 
 } 
 
-export class BoardSide { 
+export class PlayerBoard { 
     
     model;
     view ; 
 
-    constructor( slots, json = null){ 
-
-        if( json == null ){
-            this.model = BoardSide_model.fromJSON(json);
-        }else{
-            this.model = new BoardSide_model(slots);
-        }
-        this.view = new BoardSide_View();  
-        
-    }  
+    static CreatePlayerBoard(container, healthbar, OffRow, DefRow, HandRow, slots, json = "" ){
+        let board   = new PlayerBoard();
+        board.view  = new PlayerBoard_View(container,healthbar,OffRow,DefRow,HandRow);
+        board.model = new PlayerBoard_model( slots );
+        board.view.render(board.model) 
+        return board;
+    } 
 
     asHTML(){
         return this.view.container;
@@ -150,22 +132,10 @@ export class BoardSide {
 
     toJSON(){
         return this.model.toJSON();
-    }
-    
-    render(){
-        this.view.render(this.model);
-    }   
+    } 
 
     addToHand(card){
         this.view.addToHand(card); 
     }
-
-    activate(){
-
-    }
-
-    showHand(){
-
-    }
-
+ 
 }   

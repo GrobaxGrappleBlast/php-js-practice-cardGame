@@ -1,8 +1,7 @@
 import { Card } from './Card.js';
 import { Dock } from './Dock.js';
-import {BoardSide} from './BoardSide.js'; 
-import {Game} from './Game.js'
-import {Player} from './player.js'
+import {PlayerBoard} from './PlayerBoard.js';  
+import {Game} from './Game.js';  
 import {DraggingHandler} from './behaviour/DraggingHandler.js'
 
 const Constants = { 
@@ -35,4 +34,4 @@ const Constants = {
 }
 
 
-export {Game, Card, Dock, BoardSide, Constants , Player, DraggingHandler};
+export {Game, Card, Dock, PlayerBoard, Constants ,DraggingHandler};

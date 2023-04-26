@@ -11,7 +11,7 @@ class DockModel{
 } 
 class DockView{ 
 
-    element = document.createElement("td"); 
+    element = document.createElement("div"); 
     
     constructor(){
         this.element.classList.add(Constants.CARD_CLASS); 
