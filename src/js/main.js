@@ -3,6 +3,9 @@ import { Dock } from './Dock.js';
 import {PlayerBoard} from './PlayerBoard.js';  
 import {Game} from './Game.js';  
 import {DraggingHandler} from './behaviour/DraggingHandler.js'
+import {Player, HumanPlayer,AIPlayer} from './Player.js';
+import {generalMethods} from './behaviour/general.js'
+
 
 const Constants = { 
     // Functionality Classes
@@ -34,4 +37,4 @@ const Constants = {
 }
 
 
-export {Game, Card, Dock, PlayerBoard, Constants ,DraggingHandler};
+export {AIPlayer,HumanPlayer,Game, Card, Dock, PlayerBoard, Constants ,DraggingHandler,Player, generalMethods};

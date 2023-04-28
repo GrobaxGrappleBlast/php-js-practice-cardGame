@@ -5,6 +5,7 @@ class PlayerBoard_model {
     offensive_row;
     defensive_row;
     handCards; 
+    health = 300;
 
     constructor( slots = 1 ){
         this.offensive_row = new Array(slots);
@@ -19,64 +20,43 @@ class PlayerBoard_model {
             this.defensive_row[i] = new Dock();
         } 
     } 
-    
-    /*
-    static fromJSON(json, slots=8){
-        let rtr = new PlayerBoard_model(slots);
-        let obj = JSON.parse(json == null ? "{}" : json);
-      
-        for (let i = 0; i < rtr.offensive_row.length; i++) {
-          if (obj.offensive_row !== undefined && obj.offensive_row[i] !== undefined) {
-            rtr.offensive_row[i] = Dock.fromJSON(JSON.stringify(obj.offensive_row[i]));
-          } else {
-            rtr.offensive_row[i] = new Dock();
-          }
-        }
-      
-        for (let i = 0; i < rtr.defensive_row.length; i++) {
-          if (obj.defensive_row !== undefined && obj.defensive_row[i] !== undefined) {
-            rtr.defensive_row[i] = Dock.fromJSON(JSON.stringify(obj.defensive_row[i]));
-          } else {
-            rtr.defensive_row[i] = new Dock();
-          }
-        }
-      
-        for (let i = 0; i < rtr.handCards.length; i++) {
-            if (obj.handCards !== undefined && obj.handCards[i] !== undefined) {
-                rtr.handCards.push( 
-                    Dock.fromJSON(JSON.stringify(obj.handCards[i])) 
-                );
-            }
-        }
-        
-        return rtr;
-    } 
- 
-    rowjson(arr){
-        let rtr = "";
-        let first = true;
-        arr.forEach  ( dock => {
-            if(first){
-                first = false;
-                rtr += ",\n";
-            }
-            rtr += dock.toJSON();
-        }); 
-    }
-
-    toJSON(){
- 
-        return `
-        {
-          "offensive_row":[`+ rowjson(this.offensive_row) +`],
-          "defensive_row":[`+ rowjson(this.defensive_row) +`],
-          "handCards":[`+ rowjson(this.handCards) +`]
-        }
-        `
-    }*/
-
+     
     addToHand(Card){
         this.handCards.push(Card);
+    }
+
+    getRowDTO(  row ){
+        console.log("ROW DTO")
+        let arr = Array();
+        row.forEach(p => {
+            arr.push( p.getDTO() );
+        })
+        return arr;
+    }
+
+    getCardArrayDTO(cards){
+        let arr = Array();
+        cards.forEach(p => {
+            arr.push( p.getDTO() );
+        });
+        return arr;
+    }
+ 
+    getDTO(){
+        return {
+            health       : this.health,
+            offensive_row: this.getRowDTO(this.offensive_row),
+            defensive_row: this.getRowDTO(this.defensive_row),
+            handCards    : this.getCardArrayDTO(this.handCards) 
+        }
+    }
+
+    getStateJSONNoHand(){
+        return `{
+            "health"        : "${ this.health}",
+            "offensive_row" : "${ this.getRowJson(this.offensive_row) }",
+            "defensive_row" : "${ this.getRowJson(this.defensive_row) }" 
+        }`;
     }
 }
 
@@ -113,6 +93,27 @@ class PlayerBoard_View {
     addToHand(card){
         card.dockAt(this.hand);
     } 
+
+    disableUserInteraction(){
+        this.container.classList.add("NON_INTERACTIVE"); 
+    } 
+    enableUserInteraction(){
+        this.container.classList.remove("NON_INTERACTIVE"); 
+    }
+
+    hideHand(){
+        this.hand.classList.add("INVISIBLE");
+    } 
+    showHand(){
+        this.hand.classList.remove("INVISIBLE");
+    }
+
+    disableHand(){
+        this.hand.classList.add("NON_INTERACTIVE"); 
+    }
+    enableHand(){
+        this.hand.classList.remove("NON_INTERACTIVE"); 
+    }
 } 
 
 export class PlayerBoard { 
@@ -134,10 +135,7 @@ export class PlayerBoard {
 
     toJSON(){
         return this.model.toJSON();
-    } 
-
-    
-
+    }   
 
     addToHand(card){
         this.model.addToHand(card);
@@ -149,5 +147,19 @@ export class PlayerBoard {
             this.addToHand(card);
         })
     }
+
+    activate(){
+        this.view.enableUserInteraction();
+        this.view.enableHand();
+    }
+    
+    deactivate(){
+        this.view.disableUserInteraction();
+        this.view.disableHand();
+    }
  
+    getDTO(){
+       return this.model.getDTO();
+    }
+   
 }   

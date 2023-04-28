@@ -15,14 +15,14 @@
         const ABSOLUTE = 1;
     }
 
-    class CardEffect{
+    class Card{
 
         public $target;
         public $damage; 
         public $rounds;
         public $cardType;
         public $cardScale;
-        
+
         function toJSON(){
 
             return ( 
@@ -36,6 +36,17 @@
             );
         }
 
+        static function fromJSON($json){
+            $data = json_decode($json, true);
+            return new Card(
+                $data['target'],
+                $data['damage'],
+                $data['rounds'],
+                $data['type'],
+                $data['scale']
+            );
+        }
+
         function __construct($target, $damage, $rounds, $CardType, $CardScale) {
             $this->target = $target; 
             $this->damage = $damage;
@@ -43,16 +54,16 @@
             $this->cardType = $CardType;
             $this->cardScale = $CardScale;
         }
-    }
  
-
+    }
+  
     // Define a function that returns some data
     function getOffensive($count) {
 
         $cards = array();
 
         for ($i = 0; $i < $count; $i++) {
-            $Card = new CardEffect(
+            $Card = new Card(
                 rand(0, 1)  ,   // Target Self or Enemy
                 rand(1, 30) ,   // Damage Number,
                 rand(1, 5)  ,   // Rounds it works
@@ -70,7 +81,7 @@
         $cards = array();
 
         for ($i = 0; $i < $count; $i++) {
-            $Card = new CardEffect(
+            $Card = new Card(
                 rand(0, 1)  ,   // Target Self or Enemy
                 rand(1, 30) ,   // Damage Number,
                 rand(1, 5)  ,   // Rounds it works

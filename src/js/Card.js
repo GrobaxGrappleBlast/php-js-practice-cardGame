@@ -1,5 +1,5 @@
 
-import {Constants, DraggingHandler} from './main.js'
+import {Constants, DraggingHandler, Dock} from './main.js'
 
 class CardModel{  
     
@@ -21,17 +21,6 @@ class CardModel{
         return card;
     }
 
-    toJSON(){
-        return `
-        {
-            "target   " : "${this.target      }",   
-            "damage   " : "${this.damage      }",   
-            "rounds   " : "${this.rounds      }",   
-            "cardType " : "${this.cardType    }",   
-            "cardScale" : "${this.cardScale   }"   
-        }
-        `
-    }
 }
 class CardView{
     element = document.createElement("div");
@@ -43,9 +32,9 @@ class CardView{
 
     render(model){ 
         if(model.cardType == 0)
-            this.element.classList.add("OFFENSIVE_CARD");
+            this.element.classList.add(Card.OffensiveCardClass);
         else 
-            this.element.classList.add("DEFENSIVE_CARD");
+            this.element.classList.add(Card.DefensiveCardClass);
  
         this.element.innerHTML = `
             ${model.target      },
@@ -56,10 +45,16 @@ class CardView{
         `; 
     }
 }
+ 
 export class Card { 
+    
+    static OffensiveCardClass = "OFFENSIVE_CARD";
+    static DefensiveCardClass = "DEFENSIVE_CARD";
+
     dock  ;
     model ;
     view  ; 
+    
     constructor(json = null){
         
         if(json == null){
@@ -79,18 +74,27 @@ export class Card {
         return card;
     } 
 
-    toJSON(){
-        this.model.toJSON();
+    getDTO(){
+        return this.model;
     }
     
     dockAt(dock){
         this.dock = dock ;
-        this.dock.appendChild(this.view.element);
+        console.log("DOCKING CARD")
+        if(this.dock instanceof Dock){
+            console.log("OCCUPY DOCK CALLED ");
+            this.dock.occupyDock(this);
+        }
+        else{
+            this.dock.appendChild(this.view.element);
+        }
     }
 
     asHTML(){
         return this.view.element;
-     }
+    }
+
+
 
 }
 

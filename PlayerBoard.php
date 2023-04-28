@@ -2,7 +2,7 @@
 
  <?php
     
-    function generatePlayerAndBoard($playerId, $slots) {
+    function generatePlayerAndBoard($playerId, $slots, $playerName, $isAI = false) {
     $ContainerClass = "PlayerContainer";
     $healthBar      = "PlayerHealthBar";
     $InnerHealthBar = "InnerHealthBar";
@@ -11,35 +11,46 @@
     $DefCardRow     = "DefensiveCardRow";
     $HandRow        = "HandRow";
  ?>
-
-<div class="<?php echo $ContainerClass ?>" id="<?php  echo $playerId ?>">
-    <div class="<?php echo $healthBar ?>"><div class="<?php echo $InnerHealthBar ?>"></div></div>
-    <div class="<?php echo $CardRow ." ".$OffCardRow  ?>">
-         
+<span>
+    <div class="<?php echo $ContainerClass ?>" id="<?php  echo $playerId ?>">
+            <div class="<?php echo $healthBar ?>"><div class="<?php echo $InnerHealthBar ?>"></div><span class="PlayerNameHeader"><h3><?= $playerName?></h3></span></div>
+            <div class="<?php echo $CardRow ." ".$OffCardRow  ?>">
+                
+            </div>
+            <div class="<?php echo $CardRow ." ".$DefCardRow  ?>">
+                
+            </div>
+            <div class="<?php echo $CardRow ." ".$HandRow  ?>">
+            
+            </div>
     </div>
-    <div class="<?php echo $CardRow ." ".$DefCardRow  ?>">
+    <script type="module">
         
-    </div>
-    <div class="<?php echo $CardRow ." ".$HandRow  ?>">
-       
-    </div>
-</div>
-<script type="module">
-     
-    import { PlayerBoard, Game } from './src/js/main.js'
+        import { PlayerBoard, Game } from './src/js/main.js'
 
-    let game        = Game.getInstance();
-    let element     = document.getElementById("<?php echo $playerId ?>");
-    let healthBar   = element.querySelector(".PlayerHealthBar");
-    let OffRow      = element.querySelector(".OffensiveCardRow");
-    let DefRow      = element.querySelector(".DefensiveCardRow");
-    let handRow     = element.querySelector(".HandRow");
+        let game        = Game.getInstance();
+        let element     = document.getElementById("<?php echo $playerId ?>");
+        let healthBar   = element.querySelector(".PlayerHealthBar");
+        let OffRow      = element.querySelector(".OffensiveCardRow");
+        let DefRow      = element.querySelector(".DefensiveCardRow");
+        let handRow     = element.querySelector(".HandRow");
 
-    let playerBoard = PlayerBoard.CreatePlayerBoard(element,healthBar,OffRow,DefRow,handRow,<?php echo $slots ?>);
-    game.registerPlayer(playerBoard);
-
-
-</script>
+        let playerBoard = PlayerBoard.CreatePlayerBoard(element,healthBar,OffRow,DefRow,handRow,<?php echo $slots ?>);
+        <?php 
+            if($isAI){
+                ?>
+                    game.registerAIPlayerBoard(playerBoard, "<?=$playerName?>");
+                <?php
+            }else{
+                ?>
+                    game.registerPlayerBoard(playerBoard, "<?=$playerName?>");
+                <?php
+            } 
+        ?>
+        
+ 
+    </script>
+</span>
 <?php
     }
 ?>

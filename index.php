@@ -1,3 +1,4 @@
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,17 +19,29 @@
         var game_has_started = false;
     <?php
 
-        $GameRunning = false;
-        session_start();
-        if(isset($_POST["Reset"])) {
-            $_SESSION = array();
-            $GameRunning = false;
-            echo 'game_has_started = false;';
+        function input_sanitization($input){
+            $out = $input; 
+            $out = strip_tags($out); 
+            $out = htmlentities($out); 
+            $length = mb_strlen($out, 'UTF-8');
+            $out = mb_substr($out, 0, 25, 'UTF-8');
+            return $out;
+        }
+ 
+        $GameRunning = false; 
+        if(isset($_POST["Reset"])) { 
+            $GameRunning = false; 
         }  
 
         if(isset($_POST["NewGame"])) {
-            $GameRunning = true;
-            echo 'game_has_started = true;';
+            $GameRunning = true;    
+            $player1 = input_sanitization($_POST['player1']);
+            $player2 = input_sanitization($_POST['player2']);
+            
+            if($player1 == $player2){
+                $player2 = $player2 . "2";
+            }
+        
         } 
     ?>
     </script>
@@ -55,14 +68,17 @@
         </form>
         ';
     }
-    function createPlayerBoard($playerid, $slots){
-        return ' '. generatePlayerAndBoard($playerid, $slots) .' ';
+    function createPlayerBoard($playerid, $slots, $playerName){
+        return ' '. generatePlayerAndBoard($playerid, $slots, $playerName, false) .' ';
+    }
+    function createPlayerAIBoard($playerid, $slots, $playerName){
+        return ' '. generatePlayerAndBoard($playerid, $slots, $playerName, true) .' ';
     }
 
     echo ' <div id="'.LAYER_BOARD_CLASS         .'" class="'.COMMON_LAYER_CLASS.'"> ';
     if($GameRunning){
-        echo createPlayerBoard("Player1",8);
-        echo createPlayerBoard("Player2",8);  
+        echo createPlayerBoard("Player1",8, $player1);
+        echo createPlayerAIBoard("Player2",8, $player2);  
     }
     echo '</div>
     <div id="'.LAYER_TOPMessages         .'" class="'.COMMON_LAYER_CLASS.'">'. (!$GameRunning ?   createStartForm() : createResetButton()) .'</div>
@@ -73,7 +89,7 @@
         import { Game } from './src/js/main.js';
 
         let game = Game.getInstance();
-        game.start();
+        game.start(25);
 
     </script>
 </body>

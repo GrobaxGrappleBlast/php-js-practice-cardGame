@@ -8,6 +8,10 @@ class DockModel{
         model.card = obj.card; 
         this.card = Card.fromJSON(obj.card);
     }
+
+    setCard(card){
+        this.card = card;
+    }
 } 
 class DockView{ 
 
@@ -27,6 +31,10 @@ class DockView{
         parent.appendChild(this.element);
     }
 
+    setOccupant(card){
+        this.element.appendChild(card);
+    }
+
 }  
 export class Dock { 
     model ;
@@ -35,7 +43,7 @@ export class Dock {
         if(json == null){
             this.model = new DockModel();
         }else{
-            this.model = fromJSON(json);
+            this.model = DockModel.fromJSON(json);
         }
         
         this.view = new DockView();
@@ -44,19 +52,26 @@ export class Dock {
         DraggingHandler.addDockingDragListeners(this);
     }
 
-    static fromJSON(json){
-        this.model = DockModel.fromJSON(json);
+   
+    getOccupant(){
+        return this.model.card;
     }
 
-        toJSON(){
-            return `
-                {
-                    type:"dock"` + this.model.card!=null ?`,
-                    card:` + this.model.card.toJson():""
-                    `
-                }
-            `
+    occupyDock(card){
+        this.model.setCard(card);
+        this.view.setOccupant(card.asHTML());
+    }
+    isOccupied(){
+        return this.model.card != null;
+    }
+
+    getDTO(){
+        
+        return {
+            type : "dock",
+            card : (this.model.card != null) ? this.model.card.getDTO() : "" 
         }
+    }
 
     attachToParent(parent){
         this.view.attachToParent(parent);
@@ -66,9 +81,12 @@ export class Dock {
        return this.view.element;
     }
     
-    isOccupied(){
-        return this.model.card != null;
+    toString() {
+        return `DOCK( Card:${this.model.card} )`;
     }
+    
+
+
 }
 
  
