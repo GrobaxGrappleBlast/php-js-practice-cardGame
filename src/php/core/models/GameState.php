@@ -60,7 +60,7 @@ class GameState{
     *
     * @return array of GameStates
     */
-    public function CreateAllPossibleGameStates( ): array{
+    public function CreateAllPossibleGameStates( bool $rotateplayers = true ): array{
         
         $childNotes = array();  
     
@@ -90,6 +90,7 @@ class GameState{
             }
         }  
         // update the gamestates
+        if(!$rotateplayers)
         foreach ( $childNotes as &$note ) {
             $note->AttackOponents();
             $note->rotatePlayer();

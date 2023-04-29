@@ -5,6 +5,7 @@ class PlayerBoard_model {
     offensive_row;
     defensive_row;
     handCards; 
+
     health = 300;
 
     constructor( slots = 1 ){
@@ -24,40 +25,33 @@ class PlayerBoard_model {
     addToHand(Card){
         this.handCards.push(Card);
     }
-
-    getRowDTO(  row ){
-        console.log("ROW DTO")
-        let arr = Array();
-        row.forEach(p => {
-            arr.push( p.getDTO() );
-        })
-        return arr;
-    }
-
-    getCardArrayDTO(cards){
-        let arr = Array();
-        cards.forEach(p => {
-            arr.push( p.getDTO() );
-        });
-        return arr;
-    }
  
     getDTO(){
+        
+        function getRowDTO(  row ){ 
+            let arr = Array();
+            row.forEach(p => {
+                arr.push( p.getDTO() );
+            })
+            return arr;
+        }
+
+        function getCardArrayDTO(cards){
+            let arr = Array();
+            cards.forEach(p => {
+                arr.push( p.getDTO() );
+            });
+            return arr;
+        }
+
         return {
             health       : this.health,
-            offensive_row: this.getRowDTO(this.offensive_row),
-            defensive_row: this.getRowDTO(this.defensive_row),
-            handCards    : this.getCardArrayDTO(this.handCards) 
+            offensive_row: getRowDTO(this.offensive_row),
+            defensive_row: getRowDTO(this.defensive_row),
+            handCards    : getCardArrayDTO(this.handCards) 
         }
     }
 
-    getStateJSONNoHand(){
-        return `{
-            "health"        : "${ this.health}",
-            "offensive_row" : "${ this.getRowJson(this.offensive_row) }",
-            "defensive_row" : "${ this.getRowJson(this.defensive_row) }" 
-        }`;
-    }
 }
 
 class PlayerBoard_View { 
@@ -138,8 +132,9 @@ export class PlayerBoard {
     }   
 
     addToHand(card){
+        
         this.model.addToHand(card);
-        this.view.addToHand(card);  
+        this.view .addToHand(card);  
     }
 
     addCardsToHand(cards){
@@ -161,5 +156,16 @@ export class PlayerBoard {
     getDTO(){
        return this.model.getDTO();
     }
+
+    AI_getCard( id ){
+        this.model.handCards.forEach( card => {
+            console.log( `${card.model.uniqueId} == ${id} = ${card.model.uniqueId == id}`)
+            if(card.model.uniqueId == id )
+                return card;
+        });
+        return null;
+    }
+
+
    
 }   

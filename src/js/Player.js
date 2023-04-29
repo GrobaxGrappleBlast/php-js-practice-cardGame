@@ -84,11 +84,11 @@ export class AIPlayer extends Player {
         const game      = Game.getInstance();
         const oponents  = game.getOpponents(this.name);
 
-        const response = await apiCaller.callAIMove(this.board.getDTO(), this.createOponentsDTO(oponents)  );
-        const data = await response.json();
-
+        const data = await apiCaller.callAIMove(this.board.getDTO(), this.createOponentsDTO(oponents)  );
         
-        // todo
-        alert(data);
+        let card_0 = this.board.AI_getCard(data.move[0]);
+        let card_1 = this.board.AI_getCard(data.move[1]);
+
+        alert(card_0);
     }
 }

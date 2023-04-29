@@ -23,8 +23,10 @@ require_once 'src/php/core/core.php';
         // it is a recursive algorithm. and it will call it self over and over to create a tree node structure. 
         // where all leafs are nodes of possible gamestates. 
 
-        static function minimax(GameState $state, int $depth): AlgorithmResponse { 
-             
+        static function minimax(GameState $state, int $depth, bool $isFirst = true ): AlgorithmResponse { 
+            
+           
+            
             if ($depth == 0 || $state->isGameOver()) {  
                 return new AlgorithmResponse($state);
             } 
@@ -35,8 +37,8 @@ require_once 'src/php/core/core.php';
             $bestState->value = -INF;  // minus infinity
             $bestNextState = null; 
  
-            foreach (  AlgorithmSolver::generateNextStates($state) as $nextState) {
-                $result = AlgorithmSolver::minimax($nextState, $depth - 1); 
+            foreach (  AlgorithmSolver::generateNextStates($state, $isFirst) as $nextState ) {
+                $result = AlgorithmSolver::minimax($nextState, $depth - 1, false); 
                 if ($bestState->value <= $result->value) {
                     $bestState = $result;
                     $bestState->state = $nextState; // update the best state with the next state that led to the best outcome
@@ -54,8 +56,8 @@ require_once 'src/php/core/core.php';
             return $state->eval();
         }
     
-        static function generateNextStates(GameState $state): array {
-            return $state->CreateAllPossibleGameStates();
+        static function generateNextStates(GameState $state,  bool $isFirst): array {
+            return $state->CreateAllPossibleGameStates($isFirst);
         }
     
        
