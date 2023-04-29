@@ -91,7 +91,8 @@ export class AIPlayer extends Player {
 
         console.log(JSON.stringify(inputData));
 
-        const response = await fetch('src/AICalculator.php/calcAIMove', {
+        
+        const response = await fetch('src/php/api/CalcAI.php/calcAIMove', {
             method: 'POST',
             headers : {'Content-Type': 'application/json'},
             body: JSON.stringify(inputData)

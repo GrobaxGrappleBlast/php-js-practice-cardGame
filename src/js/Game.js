@@ -23,13 +23,13 @@ export class Game{
     }
     
     async getOffensiveCards(count) {
-        let response = await fetch('./src/CardCreator.php?request=offensive&count=' + count);
+        let response = await fetch('src/php/api/CreateCards.php?request=offensive&count=' + count);
         let data = await response.json(); 
         return data;
     }
       
     async getDefensiveCards(count) {
-        let response = await fetch('./src/CardCreator.php?request=defensive&count=' + count);
+        let response = await fetch('src/php/api/CreateCards.php?request=defensive&count=' + count);
         let data = await response.json(); 
         return data;
     }

@@ -1,61 +1,5 @@
 <?php
-
-    class Target {
-        const SELF = 0;
-        const ENEMY = 1;
-    }
- 
-    class CardType{
-        const OFFENSIVE = 0;
-        const DEFENSIVE = 1;
-    }
-    
-    class CardScale{
-        const RELATIVE = 0;
-        const ABSOLUTE = 1;
-    }
-
-    class Card{
-
-        public $target;
-        public $damage; 
-        public $rounds;
-        public $cardType;
-        public $cardScale;
-
-        function toJSON(){
-
-            return ( 
-                "{
-                    target:{". $this->target       ."},   
-                    damage:{". $this->damage       ."},
-                    rounds:{". $this->rounds       ."},
-                    type:{  ". $this->cardType     ."},
-                    scale:{ ". $this->cardScale    ."}
-                }"
-            );
-        }
-
-        static function fromJSON($json){
-            $data = json_decode($json, true);
-            return new Card(
-                $data['target'],
-                $data['damage'],
-                $data['rounds'],
-                $data['type'],
-                $data['scale']
-            );
-        }
-
-        function __construct($target, $damage, $rounds, $CardType, $CardScale) {
-            $this->target = $target; 
-            $this->damage = $damage;
-            $this->rounds = $rounds;
-            $this->cardType = $CardType;
-            $this->cardScale = $CardScale;
-        }
- 
-    }
+    require_once 'src/php/core/core.php';
   
     // Define a function that returns some data
     function getOffensive($count) {
@@ -111,8 +55,7 @@
             echo "404 Not Found";
             break;
     }
-   
-       
+     
 ?>
 
 
