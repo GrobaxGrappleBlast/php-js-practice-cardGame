@@ -9,8 +9,7 @@ class Player{
         public $defensiveCards= Array(); 
         public $handCards_defensive = Array() ;
         public $handCards_offensive = Array() ;
-  
-
+   
         public static function createFromJSON($json){
             $THIS = new Player();
             $THIS->health   = $json["health"];
@@ -65,8 +64,7 @@ class Player{
             // calc damage
             $health_max = $copy->health;
             $health_cur = $copy->health;
-
-            
+ 
             $o =  $offense;
 
             // calc raw damage. 
@@ -206,4 +204,5 @@ class Player{
         public $off_Bonus_abs;
 
     } 
+
 ?>

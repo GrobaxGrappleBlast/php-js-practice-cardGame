@@ -6,8 +6,10 @@
 
         $cards = array();
 
+        $counter = 0;
         for ($i = 0; $i < $count; $i++) {
             $Card = new Card(
+                "o" + $counter++,
                 rand(0, 1)  ,   // Target Self or Enemy
                 rand(1, 30) ,   // Damage Number,
                 rand(1, 5)  ,   // Rounds it works
@@ -24,8 +26,10 @@
     function getDefensive($count) {
         $cards = array();
 
+        $counter = 0;
         for ($i = 0; $i < $count; $i++) {
             $Card = new Card(
+                "d" + $counter++,
                 rand(0, 1)  ,   // Target Self or Enemy
                 rand(1, 30) ,   // Damage Number,
                 rand(1, 5)  ,   // Rounds it works

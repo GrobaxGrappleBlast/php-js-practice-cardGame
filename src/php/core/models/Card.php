@@ -21,6 +21,9 @@ require_once 'src/php/core/core.php';
     */
     class Card{
 
+         /** self or enemy 
+         * @var string */
+        public $uniqueId;
         /** self or enemy 
          * @var Target */
         public $target;
@@ -37,12 +40,13 @@ require_once 'src/php/core/core.php';
          * @var CardScale */
         public $cardScale;
 
-        function __construct($target, $damage, $rounds, $CardType, $CardScale) {
-            $this->target = $target; 
-            $this->damage = $damage;
-            $this->rounds = $rounds;
-            $this->cardType = $CardType;
-            $this->cardScale = $CardScale;
+        function __construct($uniqueId, $target, $damage, $rounds, $CardType, $CardScale) {
+            $this->uniqueId     = $uniqueId;
+            $this->target       = $target; 
+            $this->damage       = $damage;
+            $this->rounds       = $rounds;
+            $this->cardType     = $CardType;
+            $this->cardScale    = $CardScale;
         }
 
         public function __toString(): string {
@@ -63,6 +67,7 @@ require_once 'src/php/core/core.php';
         */
         static function fromJSON($json) : Card{   
             return new Card(
+                $json['uniqueId'],
                 $json['target'],
                 $json['damage'],
                 $json['rounds'],
