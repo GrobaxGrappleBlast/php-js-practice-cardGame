@@ -25,37 +25,29 @@ require_once 'src/php/core/core.php';
 
         static function minimax(GameState $state, int $depth): AlgorithmResponse { 
              
-            if ($depth == 0 || $state->isGameOver()) { 
-
-                print_r("END OF ALGO");
+            if ($depth == 0 || $state->isGameOver()) {  
                 return new AlgorithmResponse($state);
             } 
- 
+
             // if the active player is the player the ai is calculating for;
             // wich it is if the id is 0, see in the constructor, where the ai player has id = 0 assigned;
             $bestState = new AlgorithmResponse();
-            //if ($state->activePlayer->id == 0) {
-                // we asume anything will be larger than minus infinity and thus will always get a response
-                $bestState->value = -INF;  // minus infinity
-                foreach ( AlgorithmSolver::generateNextStates($state) as $nextState) {
-                    $result = AlgorithmSolver::minimax($nextState, $depth - 1); 
-                    if($bestState->value <=  $result->value){
-                        $bestState = $result;
-                    }
-                }
+            $bestState->value = -INF;  // minus infinity
+            $bestNextState = null; 
+ 
+            foreach (  AlgorithmSolver::generateNextStates($state) as $nextState) {
+                $result = AlgorithmSolver::minimax($nextState, $depth - 1); 
+                if ($bestState->value <= $result->value) {
+                    $bestState = $result;
+                    $bestState->state = $nextState; // update the best state with the next state that led to the best outcome
+                    $bestNextState = $nextState; // update the best next state
+                } 
+            }
 
-            //} else { 
-            //    // we assume that anything must be lower than infinity and thus we will always get a result
-            //    $bestState->value = INF;  // infinity
-            //    foreach ( AlgorithmSolver::generateNextStates($state) as $nextState) {
-            //        $result = AlgorithmSolver::minimax($nextState, $depth - 1); 
-            //        if($bestState->value >= $result->value){
-            //            $bestState = $result;
-            //        }
-            //    }
-            //}
-
-            return $bestState;
+            $response = new AlgorithmResponse();
+            $response->state = $bestNextState;
+            $response->value = $bestState->value;
+            return $response;
         }
 
         static function evaluateState(GameState $state): float {

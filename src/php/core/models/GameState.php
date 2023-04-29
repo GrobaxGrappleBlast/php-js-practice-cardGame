@@ -70,7 +70,7 @@ class GameState{
         for ($o=0; $o < count($offensiveCards) ; $o++) { 
             for ($d=0; $d < count($defensiveCards) ; $d++) {  
     
-                print_r( count($offensiveCards) . " - " . $o . "::".count($defensiveCards) . " - " . $d . "\n" );
+                //print_r( count($offensiveCards) . " - $o ::" . count($defensiveCards) . " - $d\n" );
                 $offensiveCard = $offensiveCards[$o];
                 $defensiveCard = $defensiveCards[$d];
     
@@ -86,8 +86,7 @@ class GameState{
                 array_push( $this->lastlyMovedCards , $offensiveCard  );
                 array_push( $this->lastlyMovedCards , $defensiveCard  ); 
                  
-                array_push($childNotes, $newState);
-                echo "." ;
+                array_push($childNotes, $newState); 
             }
         }  
         // update the gamestates

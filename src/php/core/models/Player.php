@@ -87,7 +87,7 @@ class Player{
             // count down card rounds : DEFENSIVE
             for ($i=0; $i < count($copy->defensiveCards) ; $i++) {  
                 $card = $copy->defensiveCards[$i]; 
-                $card->rounds -= -1;
+                $card->rounds -= 1;
                 if($card->rounds == 0){
                     unset($copy->defensiveCards[$i]);
                 } 
@@ -96,7 +96,7 @@ class Player{
             // count down card rounds : OFENSIVE
             for ($i=0; $i < count($copy->offensiveCards) ; $i++) {  
                 $card = $copy->offensiveCards[$i];
-                $card->rounds -= -1;
+                $card->rounds -= 1;
                 if($card->rounds == 0){
                     unset($copy->offensiveCards[$i]);
                 } 
@@ -161,10 +161,10 @@ class Player{
 
         public function copy(): Player {
             $copy = clone $this; 
-            $copy->offensiveCards       = array_map(function($card) { return $card; }, $this->offensiveCards        );
-            $copy->defensiveCards       = array_map(function($card) { return $card; }, $this->defensiveCards        );
-            $copy->handCards_offensive  = array_map(function($card) { return $card; }, $this->handCards_offensive   );
-            $copy->handCards_defensive  = array_map(function($card) { return $card; }, $this->handCards_defensive   );
+            $copy->offensiveCards       = array_map(function($card) { return clone $card; }, $this->offensiveCards        );
+            $copy->defensiveCards       = array_map(function($card) { return clone $card; }, $this->defensiveCards        );
+            $copy->handCards_offensive  = array_map(function($card) { return clone $card; }, $this->handCards_offensive   );
+            $copy->handCards_defensive  = array_map(function($card) { return clone $card; }, $this->handCards_defensive   );
             return $copy;
         }
 
