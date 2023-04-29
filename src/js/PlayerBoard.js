@@ -157,15 +157,61 @@ export class PlayerBoard {
        return this.model.getDTO();
     }
 
-    AI_getCard( id ){
-        this.model.handCards.forEach( card => {
-            console.log( `${card.model.uniqueId} == ${id} = ${card.model.uniqueId == id}`)
-            if(card.model.uniqueId == id )
+    AI_findAvailableDock(offensive = false){
+
+        function _internal(offensive, model){
+            if(offensive){
+                //offensive
+                for (let i = 0; i < model.offensive_row.length; i++) {
+                    const dock = model.offensive_row[i];
+                    if (!dock.isOccupied()) 
+                        return dock;
+                }
+
+            }else{
+                
+                //defensive
+                for (let i = 0; i < model.defensive_row.length; i++) {
+                    const dock = model.defensive_row[i];
+                    console.log("is Dock Occupied? " + dock.isOccupied())
+                    if(!dock.isOccupied())
+                        return dock;
+                }
+
+            }
+            return null;
+        }
+
+        let res = _internal(offensive, this.model); 
+        if(res == null)
+            res = _internal(!offensive, this.model);
+
+        return res;
+    }
+
+    AI_getCard( id ){ 
+
+        for (let i = 0; i < this.model.handCards.length; i++) {
+            const card = this.model.handCards[i];
+            if (card.model.uniqueId == id) {
+                this.model.handCards.splice(i, 1); // Remove the card from the array
                 return card;
-        });
+            }
+        }
+        console.error("No Card Found by ai calculated move");
         return null;
     }
 
+    AI_playCard( id ){
+        const card =  this.AI_getCard(id);
+        const availableDock = this.AI_findAvailableDock(true);
 
+        if(availableDock == null){
+            console.error("No Available Dock Was found, move was cancelled");
+            return;
+        }
+
+        card.dockAt(availableDock);
+    }
    
 }   
