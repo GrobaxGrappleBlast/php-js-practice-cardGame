@@ -2,8 +2,7 @@
 require_once 'src/php/core/core.php';
 class Dictionary {
 
-    private $internalDictionary;
-    
+    private $internalDictionary; 
     function __construct() {
         $this->internalDictionary = array();
     }
@@ -27,8 +26,6 @@ class Dictionary {
         }
         return $keys;
     }
-    } 
-    
-    
-
+} 
+     
 ?>

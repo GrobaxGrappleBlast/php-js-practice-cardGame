@@ -9,8 +9,8 @@
     <link href="style.css" rel="stylesheet" type="text/css">
     <?php
         // dependencies; 
-        require_once 'src/constants.php'; 
-        require_once 'PlayerBoard.php';    
+        require_once 'src/php/core/constants.php'; 
+        require_once 'src/php/htmlGen/PlayerBoard.php';    
     ?>
     
     

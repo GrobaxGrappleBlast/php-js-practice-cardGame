@@ -1,4 +1,4 @@
-import { DraggingHandler, PlayerBoard, generalMethods,Game } from "./main.js";
+import { DraggingHandler, apiCaller , PlayerBoard, generalMethods,Game } from "./main.js";
 
  
 export class Player{
@@ -83,22 +83,12 @@ export class AIPlayer extends Player {
 
         const game      = Game.getInstance();
         const oponents  = game.getOpponents(this.name);
- 
-        const inputData = { 
-            player  : this.board.getDTO()        ,
-            oponents: this.createOponentsDTO(oponents)         
-        };  
 
-        console.log(JSON.stringify(inputData));
-
-        
-        const response = await fetch('src/php/api/CalcAI.php/calcAIMove', {
-            method: 'POST',
-            headers : {'Content-Type': 'application/json'},
-            body: JSON.stringify(inputData)
-        });
-        
+        const response = await apiCaller.callAIMove(this.board.getDTO(), this.createOponentsDTO(oponents)  );
         const data = await response.json();
+
+        
+        // todo
         alert(data);
     }
 }

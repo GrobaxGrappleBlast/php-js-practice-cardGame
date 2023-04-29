@@ -1,4 +1,4 @@
-import { Card, Constants ,  DraggingHandler, Player, HumanPlayer,AIPlayer} from './main.js';
+import { Card, Constants ,apiCaller,  DraggingHandler, Player, HumanPlayer,AIPlayer} from './main.js';
 
 export class Game{
 
@@ -21,37 +21,27 @@ export class Game{
         let player = new AIPlayer(board, name);
         this.players.push(player);
     }
-    
-    async getOffensiveCards(count) {
-        let response = await fetch('src/php/api/CreateCards.php?request=offensive&count=' + count);
-        let data = await response.json(); 
-        return data;
-    }
-      
-    async getDefensiveCards(count) {
-        let response = await fetch('src/php/api/CreateCards.php?request=defensive&count=' + count);
-        let data = await response.json(); 
-        return data;
-    }
 
     async start(rounds){ 
-        // todo, move this out of start and into a constructor or something.
-        // todo reconsider last todo.
-        // give Cards to Eeach Player
+        
+        // creating cards
+        let offensive_cards = await apiCaller.CallGetCards_Offensive( this.players.length * 8 );
+        let defensive_cards = await apiCaller.CallGetCards_Defensive( this.players.length * 8 );
+
+
         for (let i = 0; i < this.players.length ; i++) {
             let offCards = [];
             let defCards = [];
             
-            let _;
-            _ = await this.getOffensiveCards(8);
-            
+            let _ = offensive_cards.splice(0, 8);
+
             _.forEach( card => {
                 let a = JSON.stringify(card);
                 let b = Card.fromJSON(a);
                 offCards.push( Card.fromJSON( JSON.stringify(card) ) );
             });
 
-            _ = await this.getDefensiveCards(8);
+            _ = defensive_cards.splice(0, 8);
             
             _.forEach( card => {
                 let a = JSON.stringify(card);

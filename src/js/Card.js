@@ -3,6 +3,7 @@ import {Constants, DraggingHandler, Dock} from './main.js'
 
 class CardModel{  
     
+    uniqueId;
     target;
     damage; 
     rounds;
@@ -13,11 +14,12 @@ class CardModel{
  
         let obj         = JSON.parse(json);
         let card        = new CardModel();
-        card.target      = obj.target      ;
-        card.damage      = obj.damage      ; 
-        card.rounds      = obj.rounds      ;
-        card.cardType    = obj.cardType    ;
-        card.cardScale   = obj.cardScale   ;
+        card.uniqueId   = obj.uniqueId  ;
+        card.target     = obj.target    ;
+        card.damage     = obj.damage    ; 
+        card.rounds     = obj.rounds    ;
+        card.cardType   = obj.cardType  ;
+        card.cardScale  = obj.cardScale ;
         return card;
     }
 

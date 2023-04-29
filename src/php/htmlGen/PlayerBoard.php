@@ -1,6 +1,6 @@
- 
-
  <?php
+
+    require_once 'src/php/core/constants.php';
     
     function generatePlayerAndBoard($playerId, $slots, $playerName, $isAI = false) {
     $ContainerClass = "PlayerContainer";
@@ -46,9 +46,7 @@
                     game.registerPlayerBoard(playerBoard, "<?=$playerName?>");
                 <?php
             } 
-        ?>
-        
- 
+        ?> 
     </script>
 </span>
 <?php
