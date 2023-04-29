@@ -9,10 +9,7 @@ class Player{
         public $defensiveCards= Array(); 
         public $handCards_defensive = Array() ;
         public $handCards_offensive = Array() ;
-
-        public $roundDefense;
-        public $roundOffense;
- 
+  
 
         public static function createFromJSON($json){
             $THIS = new Player();
@@ -56,105 +53,95 @@ class Player{
             return $THIS;   
         } 
 
-        private static function asPercent($total, $percent) : float {
-            return ( $total / 100 ) * $percent;
-        }
-
-        public function takeDamage(array $offenses): Player{ 
-
-            $copy = $this->copy(); 
+        public function takeDamage( PlayerRoundDamage $offense ): Player{ 
            
+            $copy = clone $this; 
+            $defense = $copy->calc_defense();
+
             // calc Healing, 
-            $copy->health += $this->roundDefense->def_Healing_abs;
-            $copy->health = Player::asPercent($copy->health , 1 + $this->roundDefense->def_Healing_rel);
+            $copy->health += $defense->def_Healing_abs;
+            $copy->health = Player::asPercent($copy->health , 1 + $defense->def_Healing_rel);
             
             // calc damage
             $health_max = $copy->health;
             $health_cur = $copy->health;
 
-            for ($i=0; $i < count($offenses) ; $i++) {  
-                $o =  $offenses[$i];
+            
+            $o =  $offense;
 
-                // calc raw damage.
-                $absoluteDamage = Player::asPercent( $o->off_Damage_abs + $o->off_Bonus_abs , 1 + $o->off_Bonus_rel );
-                $relativeDamage = Player::asPercent( $health_max, $o->off_Damage_rel + $o->off_Bonus_rel );
+            // calc raw damage. 
+            $absoluteDamage = Player::asPercent( $o->off_Damage_abs + $o->off_Bonus_abs , 1 + $o->off_Bonus_rel );
+            $relativeDamage = Player::asPercent( $health_max, $o->off_Damage_rel + $o->off_Bonus_rel );
 
-                // take defense into account
-                $absoluteDamage = $absoluteDamage - $this->roundDefense->def_Negation_rel ;  
-                $relativeDamage = $relativeDamage - $this->roundDefense->def_Negation_rel ; 
+            // take defense into account
+            $absoluteDamage = $absoluteDamage - $defense->def_Negation_rel ;  
+            $relativeDamage = $relativeDamage - $defense->def_Negation_rel ; 
 
-                $absoluteDamage = Player::asPercent($absoluteDamage, 1 -  $this->roundDefense->def_Negation_abs );  
-                $relativeDamage = Player::asPercent($relativeDamage, 1 -  $this->roundDefense->def_Negation_abs );  
+            $absoluteDamage = Player::asPercent($absoluteDamage, 1 -  $defense->def_Negation_abs );  
+            $relativeDamage = Player::asPercent($relativeDamage, 1 -  $defense->def_Negation_abs );  
 
-                // Take Damage!! WAHRRR! 
-                $health_cur    = ($health_cur) - $relativeDamage - $absoluteDamage;
-                $copy->health = $health_cur;
-            }  
+            // Take Damage!! WAHRRR! 
+            $health_cur    = ($health_cur) - $relativeDamage - $absoluteDamage;
+            $copy->health = $health_cur;
 
-            // count down card rounds
+            // count down card rounds : DEFENSIVE
             for ($i=0; $i < count($copy->defensiveCards) ; $i++) {  
-                $card = $copy->defensiveCards[$i];
-                $card->round -= -1;
-                if($card->round == 0){
+                $card = $copy->defensiveCards[$i]; 
+                $card->rounds -= -1;
+                if($card->rounds == 0){
                     unset($copy->defensiveCards[$i]);
                 } 
             }
 
-            for ($i=0; $i < count($copy->roundDefense) ; $i++) {  
-                $card = $copy->roundDefense[$i];
-                $card->round -= -1;
-                if($card->round == 0){
-                    unset($copy->roundDefense[$i]);
+            // count down card rounds : OFENSIVE
+            for ($i=0; $i < count($copy->offensiveCards) ; $i++) {  
+                $card = $copy->offensiveCards[$i];
+                $card->rounds -= -1;
+                if($card->rounds == 0){
+                    unset($copy->offensiveCards[$i]);
                 } 
-            }
+            } 
             return $copy;     
         }
-
-        public function calcRound(): void {
-            $this->calc_defense();
-            $this->calc_offense(); 
-        }
  
-        private function calc_defense() : void {
-            
+        public function calc_defense() : PlayerRoundDefense {
             // round defense;
-            $this->roundDefense = new PlayerRoundDefense();
-
+            $roundDefense = new PlayerRoundDefense(); 
             // Every card needs to be added. 
             for ($i=0; $i < count($this->defensiveCards) ; $i++) {  
                 $card = $this->defensiveCards[$i];
                 switch($card->target){
                     case Target::SELF:
                         // interpreted as Healing for Self, thats why a defensive target is self.
-                        $this->addValueAndConsiderScaling($card,$this->roundDefense->def_Healing_rel, $this->roundDefense->def_Healing_abs);
+                        $this->addValueAndConsiderScaling($card,$roundDefense->def_Healing_rel, $roundDefense->def_Healing_abs);
                         break;
                     case Target::ENEMY:
                         // interpreted as Damage Negation for Enemy Damage thats why a defensive target is self.
-                        $this->addValueAndConsiderScaling($card,$this->roundDefense->def_Negation_rel, $this->roundDefense->def_Negation_abs);
+                        $this->addValueAndConsiderScaling($card,$roundDefense->def_Negation_rel, $roundDefense->def_Negation_abs);
                         break;
                 } 
             }   
+            return $roundDefense; 
         }
  
-        private function calc_offense() : void { 
-            
+        public function calc_offense() : PlayerRoundDamage {
             // round offense ;
-            $this->roundDefense = new PlayerRoundDamage();
-
+            $roundDefense = new PlayerRoundDamage(); 
             // Every card needs to be added. 
             for ($i=0; $i < count($this->offensiveCards) ; $i++) {  
                 $card = $this->offensiveCards[$i];
                 switch($card->target){
                     case Target::SELF:
                         // interpreted as Healing for Self, thats why a defensive target is self.
-                        $this->addValueAndConsiderScaling($card,$this->roundDefense->off_Bonus_rel, $this->roundDefense->off_Bonus_abs);
+                        $this->addValueAndConsiderScaling($card,$roundDefense->off_Bonus_rel, $roundDefense->off_Bonus_abs);
                         break;
                     case Target::ENEMY:
                         // interpreted as Damage Negation for Enemy Damage thats why a defensive target is self.
-                        $this->addValueAndConsiderScaling($card,$this->roundDefense->off_Damage_rel, $this->roundDefense->off_Damage_abs);
+                        $this->addValueAndConsiderScaling($card,$roundDefense->off_Damage_rel, $roundDefense->off_Damage_abs);
                         break;
                 } 
-            }   
+            }
+            return $roundDefense;  
         }
         
         private function addValueAndConsiderScaling(&$card,&$relative, &$absolute):void{
@@ -166,8 +153,39 @@ class Player{
                     $absolute = $absolute + $card->damage;
                     break;
             }
+        }
+
+        private static function asPercent($total, $percent) : float {
+            return ( $total / 100 ) * $percent;
+        }
+
+        public function copy(): Player {
+            $copy = clone $this; 
+            $copy->offensiveCards       = array_map(function($card) { return $card; }, $this->offensiveCards        );
+            $copy->defensiveCards       = array_map(function($card) { return $card; }, $this->defensiveCards        );
+            $copy->handCards_offensive  = array_map(function($card) { return $card; }, $this->handCards_offensive   );
+            $copy->handCards_defensive  = array_map(function($card) { return $card; }, $this->handCards_defensive   );
+            return $copy;
+        }
+
+        public function playCards(Card $defensiveCard,Card $offensiveCard ){
+
+            $this->handCards_offensive = array_values(array_filter($this->handCards_offensive, 
+                function ($card)  use ($offensiveCard){ 
+                    return $card->hash() != $offensiveCard->hash();
+                }
+            )); 
+            
+            $this->handCards_defensive = array_values(array_filter($this->handCards_defensive, 
+                function ($card)  use ($defensiveCard){ 
+                    return $card->hash() != $defensiveCard->hash();
+                }
+            ));
+ 
+            array_push($this->defensiveCards , $offensiveCard);
+            array_push($this->offensiveCards , $defensiveCard); 
+ 
         } 
-  
     }
 
     class PlayerRoundDefense{

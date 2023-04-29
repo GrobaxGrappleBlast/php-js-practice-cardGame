@@ -28,37 +28,30 @@ class GameState{
         $THIS->activePlayer = $activePlayer;  
         return $THIS;
     }
-
-    
+ 
     /**
     * cycles through active players, this should be called when creating states, because the next state would
     * Have the next active player.
     */
-    private function rotatePlayer() : void {
+    public function rotatePlayer() : void {
         // 1%2 = 1 |2%2 = 0 |3%2 = 1 |4%2 = 0 |5%2 = 1 | 6%2 = 0 | 
         $this->activePlayerId = ($this->activePlayerId + 1) % count( $this->players );
         $this->activePlayer = $this->players[$this->activePlayerId];
     }
 
-    
-    private function InitStateValue() : void { 
-        
-        $offenseDict = new Dictionary();
-        // calculate Damage output for each player
-        for ($i=0; $i < count($this->players) ; $i++) { 
-            $player = &$this->players[$i];
-            $player->calcRound();
-            $offenseDict->add( $player->id, $player->roundOffense );
-        }
+    /**
+    * calculates offense, and applies it to all other players than the active player
+    */
+    public function AttackOponents() : void {  
+        // calculate offense;
+        $offense = $this->activePlayer->calc_offense();
 
-        for ($i=0; $i < count($this->players) ; $i++) { 
-            $player = &$this->players[$i];
-            $player->calcRound();
-            $offenseDict->add( $player->id, $player->roundOffense );
+        // apply offense , all oponents  
+        for ($i=0; $i < count($this->players) ; $i++) {  
+            $this->players[$i]->takeDamage($offense);
         } 
     }
-    
- 
+     
     /**
     * Returns a bool value if the game is over, the game is over when there is only one player left
     * n number of cards, k picked cards ( will always be 2 )
@@ -68,60 +61,65 @@ class GameState{
     * @return array of GameStates
     */
     public function CreateAllPossibleGameStates( ): array{
-        $childNotes = array(); 
+        
+        $childNotes = array();  
+    
         // Generate all possible combinations of offensive and defensive cards
         $offensiveCards = $this->activePlayer->handCards_offensive;
         $defensiveCards = $this->activePlayer->handCards_defensive;
-        foreach ($offensiveCards as $offensiveCard) {
-            foreach ($defensiveCards as $defensiveCard) { 
-
+        for ($o=0; $o < count($offensiveCards) ; $o++) { 
+            for ($d=0; $d < count($defensiveCards) ; $d++) {  
+    
+                print_r( count($offensiveCards) . " - " . $o . "::".count($defensiveCards) . " - " . $d . "\n" );
+                $offensiveCard = $offensiveCards[$o];
+                $defensiveCard = $defensiveCards[$d];
+    
                 // Create a new game state for each combination of cards.
-                $newState = clone $this;
-
-                // Withdrawing the current cards, from active player. 
-                $newState->activePlayer->handCards_offensive = array_diff($offensiveCards, [$offensiveCard]);
-                $newState->activePlayer->handCards_defensive = array_diff($defensiveCards, [$defensiveCard]);
- 
-                // above out commented code implemented ass array filter instead of array diff due to something with strings;
-                /*
-                $newState->activePlayer->handCards_offensive = array_values(array_filter(
-                    $offensiveCards,
-                    function ($card) use ($offensiveCard) {
-                        return $card->id !== $offensiveCard->id;
-                    }
-                ));
-                $newState->activePlayer->handCards_defensive = array_values(array_filter(
-                    $defensiveCards,
-                    function ($card) use ($defensiveCard) {
-                        return $card->id !== $defensiveCard->id;
-                    }
-                ));
-                */
-
+                $newState = $this->copy(); 
+     
+                $newState->activePlayer->playCards( $defensiveCard, $offensiveCard ); 
+                 
                 // push cards to the active lists. 
                 unset($this->lastlyMovedCards); 
                 $this->lastlyMovedCards = Array();
-
+    
                 array_push( $this->lastlyMovedCards , $offensiveCard  );
                 array_push( $this->lastlyMovedCards , $defensiveCard  ); 
-                
-                array_push( $newState->activePlayer->offensiveCards , $offensiveCard  );
-                array_push( $newState->activePlayer->defensiveCards , $defensiveCard  ); 
-
-                $newState->SelectNextPlayer();
+                 
                 array_push($childNotes, $newState);
                 echo "." ;
             }
+        }  
+        // update the gamestates
+        foreach ( $childNotes as &$note ) {
+            $note->AttackOponents();
+            $note->rotatePlayer();
         } 
-
-
-        foreach ( $childNotes as $note ) {
-            // todo 
-            // eachGamestate Should have the active player attack using the selected offense card;
-
-            // eachGameState Should Rotate the Player()
-        } 
+    
         return $childNotes;
+    }
+
+
+    public function copy() : GameState {
+ 
+        $copy = clone $this;
+        $copy->players = array_map(function($player) { return $player->copy(); }, $this->players );
+        foreach ($copy->players as $player) { 
+            if ($player->id == $copy->activePlayerId) {
+                $copy->activePlayer = $player;
+            }
+        }   
+        return $copy;
+    }
+
+    
+    private function arrayTostring(array $arr){
+        $rtr = "[";
+        foreach( $arr as $a ){
+            $rtr .=  "\n" . $a->__toString(); 
+        }
+        $rtr .= "]";
+        return $rtr;
     }
 
     /**
@@ -145,7 +143,6 @@ class GameState{
             $totalHealth += $player->health; 
         } 
         $meanHealth = $totalHealth / $playerCount;
-        print_r( "\nEVAL (){\n\tplayerCount:".$playerCount."\n\ttotalHealth:".$totalHealth."\n\tMeanHealth:".$meanHealth."\n\tActivePlayerHealth:".$this->activePlayer->health."\n}"   );
         return $this->activePlayer->health / $meanHealth; 
     }
 } 

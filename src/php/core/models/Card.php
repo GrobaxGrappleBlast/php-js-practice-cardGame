@@ -46,10 +46,15 @@ require_once 'src/php/core/core.php';
         }
 
         public function __toString(): string {
-            $targetStr  = $this->target     == Target   ::SELF      ? "SELF"        : "ENEMY";
-            $typeStr    = $this->cardType   == CardType ::OFFENSIVE ? "OFFENSIVE"   : "DEFENSIVE";
-            $scaleStr   = $this->cardScale  == CardScale::RELATIVE  ? "RELATIVE"    : "ABSOLUTE";
-            return "Target: $targetStr, Damage: $this->damage, Rounds: $this->rounds, Type: $typeStr, Scale: $scaleStr";
+            return spl_object_hash($this);
+            //$targetStr  = $this->target     == Target   ::SELF      ? "SELF"        : "ENEMY";
+            //$typeStr    = $this->cardType   == CardType ::OFFENSIVE ? "OFFENSIVE"   : "DEFENSIVE";
+            //$scaleStr   = $this->cardScale  == CardScale::RELATIVE  ? "RELATIVE"    : "ABSOLUTE";
+            //return "Target: $targetStr, Damage: $this->damage, Rounds: $this->rounds, Type: $typeStr, Scale: $scaleStr";
+        }
+
+        public function hash(){
+            return spl_object_hash($this);
         }
 
         /**

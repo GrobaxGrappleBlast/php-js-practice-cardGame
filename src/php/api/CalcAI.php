@@ -16,11 +16,10 @@
     for ($i=0; $i < count($DTO["oponents"]) ; $i++) { 
         array_push( $oponents ,  Player::createFromJSON( $DTO["oponents"][0]["board"] ));
     }  
-    $AIPlayer = Player::createFromJSON( $DTO["player"] ); 
-
+    $AIPlayer = Player::createFromJSON( $DTO["player"] );  
     $currentState = GameState::CreateFirstGameState( $AIPlayer , $oponents );
-    $nextState = AlgorithmSolver::minimax( $currentState , 2);
-    print_r("\n");
-    print_r($nextState);
+    $nextState = AlgorithmSolver::minimax( $currentState , 3); 
+
+    print_r($nextState->state->activePlayer);
 ?>
 </pre>
