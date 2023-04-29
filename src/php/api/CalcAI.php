@@ -31,7 +31,6 @@
     $currentState = GameState::CreateFirstGameState( $AIPlayer , $oponents );
     $nextState = AlgorithmSolver::minimax( $currentState , 2); 
 
-    echo $nextState->state->activePlayerId;
     print_r(json_encode(new moveFormat($nextState->state)));
 ?>
  
