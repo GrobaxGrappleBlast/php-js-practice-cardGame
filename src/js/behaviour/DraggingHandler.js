@@ -1,4 +1,4 @@
-import {Constants, Card} from './../main.js'
+import {Constants, Card, Game} from './../main.js'
 export class DraggingHandler{
 
     static current_Draged; 
@@ -61,9 +61,8 @@ export class DraggingHandler{
             }
 
             event.preventDefault();
-            let a = DraggingHandler.current_Draged;
-            a.dockAt( Dock ); 
-            DraggingHandler.RemoveDragListeners(a); 
+            let game = Game.getInstance().currentPlayer.playCard(DraggingHandler.current_Draged, Dock);
+            DraggingHandler.RemoveDragListeners(DraggingHandler.current_Draged); 
 
             // todo . this is present both in drag and in dock, find more efficient way of checking.
             if(DraggingHandler.current_Draged.asHTML().classList.contains(Card.OffensiveCardClass)){

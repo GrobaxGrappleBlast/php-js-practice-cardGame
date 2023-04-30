@@ -1,6 +1,17 @@
 
 import {Constants, DraggingHandler, Dock} from './main.js'
-
+export class CardTarget {
+    static SELF = 0;
+    static ENEMY = 1;
+} 
+export class CardType{
+    static OFFENSIVE = 0;
+    static DEFENSIVE = 1;
+} 
+export class CardScale{
+    static RELATIVE = 0;
+    static ABSOLUTE = 1;
+}
 class CardModel{  
     
     uniqueId;
@@ -47,7 +58,6 @@ class CardView{
         `; 
     }
 }
- 
 export class Card { 
     
     static OffensiveCardClass = "OFFENSIVE_CARD";
@@ -81,10 +91,8 @@ export class Card {
     }
     
     dockAt(dock){
-        this.dock = dock ;
-        console.log("DOCKING CARD")
-        if(this.dock instanceof Dock){
-            console.log("OCCUPY DOCK CALLED ");
+        this.dock = dock ; 
+        if(this.dock instanceof Dock){ 
             this.dock.occupyDock(this);
         }
         else{
@@ -94,10 +102,7 @@ export class Card {
 
     asHTML(){
         return this.view.element;
-    }
-
-
-
+    } 
 }
 
  

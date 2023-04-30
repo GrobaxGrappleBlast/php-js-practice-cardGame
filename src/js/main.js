@@ -1,4 +1,4 @@
-import { Card } from './Card.js';
+import { Card , CardTarget, CardType, CardScale} from './Card.js';
 import { Dock } from './Dock.js';
 import {PlayerBoard} from './PlayerBoard.js';  
 import {Game} from './Game.js';  
@@ -37,4 +37,4 @@ const Constants = {
 }
 
 
-export {AIPlayer,HumanPlayer,Game, Card, Dock, PlayerBoard, Constants ,DraggingHandler,Player, generalMethods, apiCaller};
+export {CardTarget, CardType, CardScale,AIPlayer,HumanPlayer,Game, Card, Dock, PlayerBoard, Constants ,DraggingHandler,Player, generalMethods, apiCaller};

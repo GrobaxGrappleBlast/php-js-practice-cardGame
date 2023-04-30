@@ -1,12 +1,11 @@
-import { Card , Dock , Constants} from './main.js'
+import { Card , Dock , CardType, Constants} from './main.js'
  
 class PlayerBoard_model { 
 
     offensive_row;
     defensive_row;
     handCards; 
-
-    health = 300;
+   
 
     constructor( slots = 1 ){
         this.offensive_row = new Array(slots);
@@ -156,40 +155,8 @@ export class PlayerBoard {
     getDTO(){
        return this.model.getDTO();
     }
-
-    AI_findAvailableDock(offensive = false){
-
-        function _internal(offensive, model){
-            if(offensive){
-                //offensive
-                for (let i = 0; i < model.offensive_row.length; i++) {
-                    const dock = model.offensive_row[i];
-                    if (!dock.isOccupied()) 
-                        return dock;
-                }
-
-            }else{
-                
-                //defensive
-                for (let i = 0; i < model.defensive_row.length; i++) {
-                    const dock = model.defensive_row[i];
-                    console.log("is Dock Occupied? " + dock.isOccupied())
-                    if(!dock.isOccupied())
-                        return dock;
-                }
-
-            }
-            return null;
-        }
-
-        let res = _internal(offensive, this.model); 
-        if(res == null)
-            res = _internal(!offensive, this.model);
-
-        return res;
-    }
-
-    AI_getCard( id ){ 
+ 
+    getCard( id ){ 
 
         for (let i = 0; i < this.model.handCards.length; i++) {
             const card = this.model.handCards[i];
@@ -202,16 +169,52 @@ export class PlayerBoard {
         return null;
     }
 
-    AI_playCard( id ){
-        const card =  this.AI_getCard(id);
-        const availableDock = this.AI_findAvailableDock(true);
+    playCard( card , dock  ){
+        card.dockAt(dock);
+        return card;
+    }
 
+    AI_playCard( id  ){
+        const card =  this.getCard(id);
+        const availableDock  = this.findAvailableDock(card.cardType == CardType.OFFENSIVE);
+        
         if(availableDock == null){
             console.error("No Available Dock Was found, move was cancelled");
             return;
         }
 
         card.dockAt(availableDock);
+        return card;
     }
+
+    findAvailableDock(offensive = false){
+
+        function _internal(offensive, model){
+            if(offensive){
+                //offensive
+                for (let i = 0; i < model.offensive_row.length; i++) {
+                    const dock = model.offensive_row[i];
+                    if (!dock.isOccupied()) 
+                        return dock;
+                }
+            }else{
+                //defensive
+                for (let i = 0; i < model.defensive_row.length; i++) {
+                    const dock = model.defensive_row[i];
+                    if(!dock.isOccupied())
+                        return dock;
+                }
+            }
+            return null;
+        }
+
+        let res = _internal(offensive, this.model); 
+        if(res == null)
+            res = _internal(!offensive, this.model);
+
+        return res;
+    }
+
+     
    
 }   

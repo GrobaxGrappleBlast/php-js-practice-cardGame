@@ -1,8 +1,7 @@
 import { Card, Constants ,apiCaller,  DraggingHandler, Player, HumanPlayer,AIPlayer} from './main.js';
 
 export class Game{
-
-    // singletong Implementation
+ 
     static instance;
     static getInstance(){
         if(Game.instance == null){
@@ -25,10 +24,10 @@ export class Game{
     async start(rounds){ 
         
         // creating cards
-        let offensive_cards = await apiCaller.CallGetCards_Offensive( this.players.length * 8 );
-        let defensive_cards = await apiCaller.CallGetCards_Defensive( this.players.length * 8 );
+        let offensive_cards = await apiCaller.CallGetCards_Offensive( this.players.length * rounds );
+        let defensive_cards = await apiCaller.CallGetCards_Defensive( this.players.length * rounds );
 
-
+        // Give Players Cards;
         for (let i = 0; i < this.players.length ; i++) {
             let offCards = [];
             let defCards = [];
@@ -54,17 +53,57 @@ export class Game{
             this.players[i].deactivate();  
         } 
  
+        // Start Rounds
+        this.startGameLoop(rounds);
+    }
+
+    currentPlayer;
+    async startGameLoop(rounds){
+
+        let playerQueue = [];
+        for( let i = 0; i < this.players.length; i++ ){
+            playerQueue.push(this.players[i]);
+        }
+
         for (let r = 0; r < rounds; r++) { 
-            console.log("ROUND " + ( r + 1) +" BEGIN!") ;   
+            console.log("ROUND " + ( r + 1) +" BEGIN!") ;  
+             
+            // All Players Are allowed to Pick Cards
             for( let i = 0; i < this.players.length; i++ ){
                 console.log("PLAYER " + (i+1))
-                this.players[i].activate();
-                await this.players[i].takeTurn();
-                this.players[i].deactivate();
+                // Select A player and Unlock The Board;
+                this.currentPlayer = this.players[i];
+                this.currentPlayer.activate();
+
+                // Let the Player have their turn;
+                await this.currentPlayer.takeTurn();
+                this.currentPlayer.deactivate();
             }
+              
+            // Calculate all players defense 
+            playerQueue.forEach(p=>{
+                p.calc_defense();
+            }) 
+
+            // After The Rounds the game Calculates Damage
+            // Damage every player
+            let attackingPlayer;
+            let target;
+            let attack; 
+            for (let i = 0; i < this.players.length; i++) {
+                console.log("PLAYER " + (i+1));
+                attackingPlayer = playerQueue.shift(); 
+                attack = attackingPlayer.calc_offense();
+                for (let a = 0; a < playerQueue.length; a++) {
+                    target = playerQueue[a];
+                    target.takeDamage(attack);
+                } 
+                playerQueue.push(attackingPlayer);
+            }
+
         }
     }
-    
+ 
     getOpponents( exceptionPlayerName = "" ){
         let oponents = [];
         for (let i = 0; i < this.players.length; i++) {

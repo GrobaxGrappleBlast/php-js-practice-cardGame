@@ -13,20 +13,20 @@ class Player{
         public static function createFromJSON($json){
             $THIS = new Player();
             $THIS->health   = $json["health"];
-             
-            foreach ($json["offensive_row"] as $cardJson) {
+              
+            foreach ($json["board"]["offensive_row"] as $cardJson) {
                 if ($cardJson["card"] != null) {
                     array_push($THIS->offensiveCards, Card::fromJSON($cardJson["card"]));
                 }
             }
             
-            foreach ($json["defensive_row"] as $cardJson) {
+            foreach ($json["board"]["defensive_row"] as $cardJson) {
                 if ($cardJson["card"] != null) {
                     array_push($THIS->defensiveCards, Card::fromJSON($cardJson["card"]));
                 }
             }
 
-            foreach ($json["handCards"] as $cardJson) {  
+            foreach ($json["board"]["handCards"] as $cardJson) {  
                 $card = Card::fromJSON($cardJson);  
                 if( $card->cardType == CardType::DEFENSIVE){
                     // I turn it back into json for having acces to cards, from json mehtod, and to use it correctly
@@ -51,12 +51,30 @@ class Player{
             $THIS->handCards_offensive = $handCards_offensive;    
             return $THIS;   
         } 
-
-        public function takeDamage( PlayerRoundDamage $offense ): Player{ 
-           
-            $copy = clone $this; 
-            $defense = $copy->calc_defense();
-
+ 
+        private static function calculate_total_relativeDamagephp($offense, $defense, $maxHealth) { 
+            $relativeDamage = ($offense->off_Damage_rel == 0 ) ? 0 : $offense->off_Damage_rel + $offense->off_Bonus_rel;
+            $relativeDamage = Player::asPercent($maxHealth, $relativeDamage/100);
+            $relativeDamage = $relativeDamage + $offense->off_Bonus_abs; 
+            // consider Defence
+            $relativeDamage = $relativeDamage - $defense->def_Negation_abs;  
+            $relativeDamage = Player::asPercent($relativeDamage, 1 - ($defense->def_Negation_rel/100));  
+            return $relativeDamage;
+        } 
+        private static function calculate_total_absoluteDamagephp($offense, $defense ) {
+            $absoluteDamage = ($offense->off_Damage_abs == 0 ) ? 0 : $offense->off_Damage_abs + $offense->off_Bonus_abs;
+            $absoluteDamage = Player::asPercent($absoluteDamage, 1 + (  $offense->off_Bonus_rel / 100 ));
+            // consider Defence
+            $absoluteDamage = $absoluteDamage - $defense->def_Negation_abs;  
+            $absoluteDamage = Player::asPercent($absoluteDamage, 1 - ( $defense->def_Negation_rel/100)); 
+            return $absoluteDamage;
+        }
+        public function takeDamage( PlayerRoundDamage $offense ) : Player{ 
+        
+     
+            $copy    = clone $this ;
+            $defense = $copy->calc_defense(); 
+    
             // calc Healing, 
             $copy->health += $defense->def_Healing_abs;
             $copy->health = Player::asPercent($copy->health , 1 + $defense->def_Healing_rel);
@@ -64,24 +82,15 @@ class Player{
             // calc damage
             $health_max = $copy->health;
             $health_cur = $copy->health;
- 
-            $o =  $offense;
-
+            
             // calc raw damage. 
-            $absoluteDamage = Player::asPercent( $o->off_Damage_abs + $o->off_Bonus_abs , 1 + $o->off_Bonus_rel );
-            $relativeDamage = Player::asPercent( $health_max, $o->off_Damage_rel + $o->off_Bonus_rel );
-
-            // take defense into account
-            $absoluteDamage = $absoluteDamage - $defense->def_Negation_rel ;  
-            $relativeDamage = $relativeDamage - $defense->def_Negation_rel ; 
-
-            $absoluteDamage = Player::asPercent($absoluteDamage, 1 -  $defense->def_Negation_abs );  
-            $relativeDamage = Player::asPercent($relativeDamage, 1 -  $defense->def_Negation_abs );  
-
+            $relativeDamage = PLAYER::calculate_total_relativeDamagephp($offense,$defense,$health_max);
+            $absoluteDamage = PLAYER::calculate_total_absoluteDamagephp($offense,$defense,);
+      
             // Take Damage!! WAHRRR! 
-            $health_cur    = ($health_cur) - $relativeDamage - $absoluteDamage;
+            $health_cur -= ($relativeDamage + $absoluteDamage); 
             $copy->health = $health_cur;
-
+    
             // count down card rounds : DEFENSIVE
             for ($i=0; $i < count($copy->defensiveCards) ; $i++) {  
                 $card = $copy->defensiveCards[$i]; 
@@ -99,8 +108,9 @@ class Player{
                     unset($copy->offensiveCards[$i]);
                 } 
             } 
-            return $copy;     
-        }
+
+            return $copy;  
+        } 
  
         public function calc_defense() : PlayerRoundDefense {
             // round defense;
@@ -153,8 +163,8 @@ class Player{
             }
         }
 
-        private static function asPercent($total, $percent) : float {
-            return ( $total / 100 ) * $percent;
+        public static function asPercent($total, $percent) : float {
+            return ( $total ) * $percent;
         }
 
         public function copy(): Player {
@@ -188,20 +198,20 @@ class Player{
 
     class PlayerRoundDefense{
         
-        public $def_Healing_rel;
-        public $def_Healing_abs;
+        public $def_Healing_rel = 0;
+        public $def_Healing_abs = 0;
 
-        public $def_Negation_rel;
-        public $def_Negation_abs;
+        public $def_Negation_rel= 0;
+        public $def_Negation_abs= 0;
 
     }
     class PlayerRoundDamage{
 
-        public $off_Damage_rel;
-        public $off_Damage_abs;
+        public $off_Damage_rel= 0;
+        public $off_Damage_abs= 0;
 
-        public $off_Bonus_rel;
-        public $off_Bonus_abs;
+        public $off_Bonus_rel = 0;
+        public $off_Bonus_abs = 0;
 
     } 
 
