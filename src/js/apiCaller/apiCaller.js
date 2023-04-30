@@ -6,7 +6,7 @@ export class apiCaller{
             oponents: oponents         
         };  
  
-        console.log(JSON.stringify(inputData));
+        //console.log(JSON.stringify(inputData));
         const response = await fetch('src/php/api/CalcAI.php', {
             method: 'POST',
             headers : {'Content-Type': 'application/json'},

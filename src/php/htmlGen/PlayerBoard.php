@@ -30,12 +30,15 @@
 
         let game        = Game.getInstance();
         let element     = document.getElementById("<?php echo $playerId ?>");
-        let healthBar   = element.querySelector(".PlayerHealthBar");
+        let healthBar       = element.querySelector(".PlayerHealthBar");
+        let InnerhealthBar  = element.querySelector(".InnerHealthBar");
         let OffRow      = element.querySelector(".OffensiveCardRow");
         let DefRow      = element.querySelector(".DefensiveCardRow");
         let handRow     = element.querySelector(".HandRow");
 
-        let playerBoard = PlayerBoard.CreatePlayerBoard(element,healthBar,OffRow,DefRow,handRow,<?php echo $slots ?>);
+        InnerhealthBar.style.width = '100%';
+
+        let playerBoard = PlayerBoard.CreatePlayerBoard(element,InnerhealthBar,OffRow,DefRow,handRow,<?php echo $slots ?>);
         <?php 
             if($isAI){
                 ?>

@@ -12,6 +12,7 @@ class Player{
    
         public static function createFromJSON($json){
             $THIS = new Player();
+            //print_r(json_encode($json));
             $THIS->health   = $json["health"];
               
             foreach ($json["board"]["offensive_row"] as $cardJson) {
@@ -61,6 +62,7 @@ class Player{
             $relativeDamage = Player::asPercent($relativeDamage, 1 - ($defense->def_Negation_rel/100));  
             return $relativeDamage;
         } 
+        
         private static function calculate_total_absoluteDamagephp($offense, $defense ) {
             $absoluteDamage = ($offense->off_Damage_abs == 0 ) ? 0 : $offense->off_Damage_abs + $offense->off_Bonus_abs;
             $absoluteDamage = Player::asPercent($absoluteDamage, 1 + (  $offense->off_Bonus_rel / 100 ));
@@ -69,6 +71,7 @@ class Player{
             $absoluteDamage = Player::asPercent($absoluteDamage, 1 - ( $defense->def_Negation_rel/100)); 
             return $absoluteDamage;
         }
+
         public function takeDamage( PlayerRoundDamage $offense ) : Player{ 
         
      
@@ -96,6 +99,7 @@ class Player{
                 $card = $copy->defensiveCards[$i]; 
                 $card->rounds -= 1;
                 if($card->rounds == 0){
+                    // todo this method leaves room for error 
                     unset($copy->defensiveCards[$i]);
                 } 
             }
@@ -105,6 +109,7 @@ class Player{
                 $card = $copy->offensiveCards[$i];
                 $card->rounds -= 1;
                 if($card->rounds == 0){
+                    // todo this method leaves room for error 
                     unset($copy->offensiveCards[$i]);
                 } 
             } 

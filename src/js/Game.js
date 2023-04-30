@@ -12,12 +12,12 @@ export class Game{
 
     players = []
     registerPlayerBoard( board , name ){
-        let player = new HumanPlayer(board, name);
+        let player = new HumanPlayer(board, name,300);
         this.players.push(player);
     }
 
     registerAIPlayerBoard( board ){
-        let player = new AIPlayer(board, name);
+        let player = new AIPlayer(board, name,300);
         this.players.push(player);
     }
 
@@ -66,11 +66,11 @@ export class Game{
         }
 
         for (let r = 0; r < rounds; r++) { 
-            console.log("ROUND " + ( r + 1) +" BEGIN!") ;  
+            //console.log("ROUND " + ( r + 1) +" BEGIN!") ;  
              
             // All Players Are allowed to Pick Cards
             for( let i = 0; i < this.players.length; i++ ){
-                console.log("PLAYER " + (i+1))
+                //console.log("PLAYER " + (i+1))
                 // Select A player and Unlock The Board;
                 this.currentPlayer = this.players[i];
                 this.currentPlayer.activate();
@@ -81,24 +81,30 @@ export class Game{
             }
               
             // Calculate all players defense 
-            playerQueue.forEach(p=>{
-                p.calc_defense();
-            }) 
+            for( let i = 0; i < this.players.length; i++ ){
+                this.players[i].calc_defense();
+            }
 
             // After The Rounds the game Calculates Damage
             // Damage every player
             let attackingPlayer;
             let target;
             let attack; 
-            for (let i = 0; i < this.players.length; i++) {
-                console.log("PLAYER " + (i+1));
+            for (let i = 0; i < this.players.length; i++) { 
                 attackingPlayer = playerQueue.shift(); 
                 attack = attackingPlayer.calc_offense();
                 for (let a = 0; a < playerQueue.length; a++) {
-                    target = playerQueue[a];
-                    target.takeDamage(attack);
+                    target = playerQueue.shift();
+                    target.takeDamage(attack, a == 0);
+
+                    if(target.isDead()){
+                        alert("IMPLEMENT PLAYER DIES METHOD");
+                    }
+
+                    playerQueue.push(target);
                 } 
                 playerQueue.push(attackingPlayer);
+                attackingPlayer.calc_downCards();
             }
 
         }

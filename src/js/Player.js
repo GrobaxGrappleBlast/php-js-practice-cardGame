@@ -1,7 +1,6 @@
 import {CardTarget, CardType, CardScale, DraggingHandler, apiCaller , PlayerBoard, generalMethods,Game } from "./main.js";
 
-class PlayerRoundDefense{
-        
+class PlayerRoundDefense{ 
     def_Healing_rel  = 0;
     def_Healing_abs  = 0;
     def_Negation_rel = 0;
@@ -9,8 +8,7 @@ class PlayerRoundDefense{
     constructor(){}
 }
 
-class PlayerRoundDamage{
-
+class PlayerRoundDamage{ 
     off_Damage_rel = 0;
     off_Damage_abs = 0;
     off_Bonus_rel  = 0;
@@ -26,11 +24,14 @@ export class Player{
     defensiveCards = [];
     name;
     board; 
-    health = 300;
- 
+    _health=0;
+    
+    _originalHealth;
     _currentDefense;
 
-    constructor(playerBoard, name){
+    constructor(playerBoard, name, health){
+        this._health =health;
+        this._originalHealth = health;
         this.name = name;
         this.board = playerBoard;
     }
@@ -58,13 +59,12 @@ export class Player{
     getDTO(){
         return {
             name    : this.name,
-            health  : this.health,
+            health  : this._health,
             board   : this.board.getDTO()
         }
     } 
 
-    // Turn Thingies;
-    takeDamage( playerOffense ){ 
+    takeDamage( playerOffense , firstAttack = true ){ 
          
         function calculate_total_relativeDamage(offense, defense, percentMethod, maxHealth) { 
             let relativeDamage = (offense.off_Damage_rel == 0 ) ? 0 : offense.off_Damage_rel + offense.off_Bonus_rel;
@@ -72,7 +72,9 @@ export class Player{
             relativeDamage = relativeDamage + offense.off_Bonus_abs; 
             // consider Defence
             relativeDamage = relativeDamage - defense.def_Negation_abs;  
-            relativeDamage = percentMethod(relativeDamage, 1 - (defense.def_Negation_rel/100));  
+            relativeDamage = percentMethod(relativeDamage, 1 - (defense.def_Negation_rel/100)); 
+            if(relativeDamage < 0 )
+                return 0 ;
             return relativeDamage;
         }
     
@@ -82,19 +84,21 @@ export class Player{
             // consider Defence
             absoluteDamage = absoluteDamage - defense.def_Negation_abs;  
             absoluteDamage = percentMethod(absoluteDamage, 1 - ( defense.def_Negation_rel/100)); 
+            if(absoluteDamage < 0 )
+                return 0 ;
             return absoluteDamage;
         }
- 
-        
         let offense =  playerOffense; 
 
-        // calc Healing, 
-        this.health += this._currentDefense.def_Healing_abs;
-        this.health = this.asPercent( this.health , 1 + this._currentDefense.def_Healing_rel);
-        
-        // calc damage
-        let health_max = this.health;
-        let health_cur = this.health;
+        // set damage
+        let health_max = this._health;
+        let health_cur = this._health;
+
+        if(firstAttack){
+            // calc Healing, 
+            this._health += this._currentDefense.def_Healing_abs;
+            this._health = this.asPercent( this._health , 1 + (this._currentDefense.def_Healing_rel / 100));
+        }
 
         // calc raw damage. 
         let relativeDamage = calculate_total_relativeDamage(offense,this._currentDefense,this.asPercent,health_max);
@@ -103,10 +107,12 @@ export class Player{
         // Take Damage!! WAHRRR! 
         //console.log(`DAMAGE REL ${relativeDamage} ABS ${absoluteDamage} RES ${relativeDamage + absoluteDamage} OFFENSE ${offense}`)
         health_cur -= (relativeDamage + absoluteDamage); 
-        this.health = health_cur;
+        this._health = health_cur;
 
-        calculate_total_relativeDamage(offense,this._currentDefense,this.asPercent,health_max);
+        this.board.setHealthWidth(this._health , this._originalHealth);
+    }
 
+    calc_downCards(){
         // count down card rounds : DEFENSIVE
         for (let i=0; i < this.defensiveCards.length ; i++) {  
             let card = this.defensiveCards[i]; 
@@ -123,10 +129,9 @@ export class Player{
             if(card.rounds == 0){
                 this.offensiveCards.splice(i, 1); 
             } 
-        }   
-        console.log("Health :" + this.health); 
+        }
     }
-
+    
     calc_defense(){ 
         // round defense;
         let roundDefense = new PlayerRoundDefense(); 
@@ -144,7 +149,7 @@ export class Player{
                     break;
             } 
         }   
-        this._currentDefense = roundDefense; 
+        this._currentDefense= roundDefense; 
     }
 
     calc_offense(){
@@ -164,7 +169,6 @@ export class Player{
                     break;
             } 
         }
- 
         return roundDefense;  
     }
     
@@ -190,6 +194,10 @@ export class Player{
         }else{
             this.offensiveCards.push(_card);
         } 
+    }
+
+    isDead(){
+        return this._health <= 0;
     }
 }
 

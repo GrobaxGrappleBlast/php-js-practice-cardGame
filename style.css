@@ -64,19 +64,21 @@
   opacity: 0;
 }
 
+.InnerHealthBar {
+  height: 100%;
+  background-color: brown;
+  float: left;
+  margin-bottom: -100%;
+  transition: 2s;
+  transition-timing-function: cubic-bezier(0.37, -0.01, 0.47, 1.01);
+}
+
 .PlayerHealthBar {
   height: 30px;
   background-color: white;
   border-radius: 5px;
   float: none;
   position: relative;
-}
-.PlayerHealthBar .InnerHealthBar {
-  height: 100%;
-  width: 100%;
-  background-color: brown;
-  float: left;
-  margin-bottom: -100%;
 }
 .PlayerHealthBar .PlayerNameHeader {
   position: absolute;

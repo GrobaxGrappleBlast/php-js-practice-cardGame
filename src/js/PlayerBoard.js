@@ -5,7 +5,6 @@ class PlayerBoard_model {
     offensive_row;
     defensive_row;
     handCards; 
-   
 
     constructor( slots = 1 ){
         this.offensive_row = new Array(slots);
@@ -59,8 +58,10 @@ class PlayerBoard_View {
     offensive_row;
     defensive_row; 
     hand ; 
+    healthbar;
 
     constructor( container, healthbar ,offensive_row, defensive_row, hand ){
+        this.healthbar =healthbar;
         this.container       = container       ;
         this.offensive_row   = offensive_row   ;
         this.defensive_row   = defensive_row   ; 
@@ -83,13 +84,23 @@ class PlayerBoard_View {
         });
     }
 
+    setHealthWidth(healthCurrent, healthOriginal){
+
+        let percent = (healthCurrent/healthOriginal)*100;
+        percent = percent < 0 ? 0 : percent;
+        percent = percent > 100 ? 100 : percent;
+        console.log("WIDTH SET TO " + percent + " PERCENT ");
+        this.healthbar.style.width = percent + '%';
+    }
+
     addToHand(card){
         card.dockAt(this.hand);
-    } 
+    }    
 
     disableUserInteraction(){
         this.container.classList.add("NON_INTERACTIVE"); 
     } 
+
     enableUserInteraction(){
         this.container.classList.remove("NON_INTERACTIVE"); 
     }
@@ -97,6 +108,7 @@ class PlayerBoard_View {
     hideHand(){
         this.hand.classList.add("INVISIBLE");
     } 
+
     showHand(){
         this.hand.classList.remove("INVISIBLE");
     }
@@ -104,6 +116,7 @@ class PlayerBoard_View {
     disableHand(){
         this.hand.classList.add("NON_INTERACTIVE"); 
     }
+
     enableHand(){
         this.hand.classList.remove("NON_INTERACTIVE"); 
     }
@@ -215,6 +228,8 @@ export class PlayerBoard {
         return res;
     }
 
-     
+    setHealthWidth(healthCurrent, healthOriginal){
+        this.view.setHealthWidth(healthCurrent,healthOriginal);
+    }
    
 }   
