@@ -116,18 +116,26 @@ export class Player{
         // count down card rounds : DEFENSIVE
         for (let i=0; i < this.defensiveCards.length ; i++) {  
             let card = this.defensiveCards[i]; 
-            card.rounds -= 1;
-            if(card.rounds == 0){
+            card.model.rounds -= 1;
+            if(card.model.rounds == 0){
+                card.kill();
                 this.defensiveCards.splice(i, 1); 
-            } 
+                //destroy(card);
+            } else{
+                card.update();
+            }   
         }
 
         // count down card rounds : OFENSIVE
         for (let i=0; i < this.offensiveCards.length ; i++) {  
             let card = this.offensiveCards[i];
-            card.rounds -= 1;
-            if(card.rounds == 0){
+            card.model.rounds -= 1;
+            if(card.model.rounds == 0){
+                card.kill();
                 this.offensiveCards.splice(i, 1); 
+                //destroy(card);
+            }else{
+                card.update();
             } 
         }
     }

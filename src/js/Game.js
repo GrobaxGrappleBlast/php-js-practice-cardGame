@@ -98,9 +98,9 @@ export class Game{
                     target.takeDamage(attack, a == 0);
 
                     if(target.isDead()){
-                        alert("IMPLEMENT PLAYER DIES METHOD");
+                        alert(" Game is Over ");
                     }
-
+                    
                     playerQueue.push(target);
                 } 
                 playerQueue.push(attackingPlayer);

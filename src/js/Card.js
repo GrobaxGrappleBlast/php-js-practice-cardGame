@@ -137,6 +137,23 @@ export class Card {
     asHTML(){
         return this.view.element;
     } 
+
+    update(){
+        this.view.render(this.model);
+    }
+
+    kill(){
+
+        if(this.dock != null){
+            if(this.dock instanceof Dock){  
+                this.dock.unOccupy();
+            } 
+        } 
+
+        this.view.element.remove();
+        
+    }
+
 }
 
  

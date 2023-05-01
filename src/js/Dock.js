@@ -61,12 +61,16 @@ export class Dock {
         this.model.setCard(card);
         this.view.setOccupant(card.asHTML());
     }
+
+    unOccupy(){
+        this.model.card = null; 
+    }
+
     isOccupied(){
         return this.model.card != null;
     }
 
-    getDTO(){
-        
+    getDTO(){ 
         return {
             type : "dock",
             card : (this.model.card != null) ? this.model.card.getDTO() : "" 
