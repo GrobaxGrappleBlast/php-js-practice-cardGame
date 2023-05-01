@@ -36,27 +36,62 @@ class CardModel{
 
 }
 class CardView{
-    element = document.createElement("div");
+
+    element         = document.createElement("div");
+    roundCounter    = document.createElement("div");
+    explaination    = document.createElement("div");
+    damageContainer = document.createElement("div");
 
     constructor(){
         // add Class 
         this.element.classList.add(Constants.CARD_CLASS); 
+        this.element.appendChild(this.roundCounter);
+        this.element.appendChild(this.explaination);
+        this.element.appendChild(this.damageContainer);
+
+
+        this.roundCounter.classList.add("card_roundCounter");
+
     }
 
     render(model){ 
+        
         if(model.cardType == 0)
             this.element.classList.add(Card.OffensiveCardClass);
         else 
             this.element.classList.add(Card.DefensiveCardClass);
- 
-        this.element.innerHTML = `
-            ${model.target      },
-            ${model.damage      },
-            ${model.rounds      },
-            ${model.cardType    },
-            ${model.cardScale   },
-        `; 
+        
+        this.roundCounter.innerHTML = model.rounds; 
+        this.explaination.innerHTML =  this.handleType(model);
+        this.damageContainer.innerHTML = this.handleDamageOutput(model);
+
+        return;
     }
+
+
+    handleType(model){
+        if ( model.cardType == CardType.DEFENSIVE ){
+            return (model.target == CardTarget.ENEMY )?
+            "Damage Negation \n":
+            "Healing Self \n"
+        }else{
+            return (model.target == CardTarget.ENEMY )?
+            "Damage Card \n":
+            "Damage Bonus Pr Attack \n"
+        }   
+    }
+    
+    handleDamageOutput(model){
+
+        let text = model.damage; 
+        if ( model.cardScale == CardScale.RELATIVE ){
+            text += "%";
+        } 
+
+        text += " damage"
+        return text;
+    }
+
 }
 export class Card { 
     
@@ -67,8 +102,7 @@ export class Card {
     model ;
     view  ; 
     
-    constructor(json = null){
-        
+    constructor(json = null){ 
         if(json == null){
             this.model = new CardModel();
         }else{

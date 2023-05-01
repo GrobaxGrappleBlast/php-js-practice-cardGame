@@ -9,7 +9,20 @@
     border: 5px solid #0000000d; 
     border-radius: 5px;
     pointer-events: all;
+    position: relative;
     //float:left;
+
+    .card_roundCounter{
+        position: absolute;
+        background-color: #eeeeca;
+        right: -5px;
+        bottom: -5px;
+        border: solid #575757 2px;
+        border-radius: 3px;
+        padding: 5px;
+        aspect-ratio: 1;
+        font-size: 10px;
+    }
 }
 .OFFENSIVE_CARD{
     border: 5px solid #893030;

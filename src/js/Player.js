@@ -154,22 +154,22 @@ export class Player{
 
     calc_offense(){
         // round offense ; 
-        let roundDefense = new PlayerRoundDamage(); 
+        let roundDamage = new PlayerRoundDamage(); 
         // Every card needs to be added. 
         for ( let i=0; i < this.offensiveCards.length ; i++) {  
             let card = this.offensiveCards[i];
             switch(card.model.target){
                 case CardTarget.SELF:
-                    // interpreted as Healing for Self, thats why a defensive target is self.
-                    this.addValueAndConsiderScaling(card, roundDefense, 'off_Bonus_rel', 'off_Bonus_abs');
+                    // Calculate as Bonus damage
+                    this.addValueAndConsiderScaling(card, roundDamage, 'off_Bonus_rel', 'off_Bonus_abs');
                     break;
                 case CardTarget.ENEMY:
-                    // interpreted as Damage Negation for Enemy Damage thats why a defensive target is self.
-                    this.addValueAndConsiderScaling(card, roundDefense, 'off_Damage_rel', 'off_Damage_abs');
+                    // Calulate as Damage
+                    this.addValueAndConsiderScaling(card, roundDamage, 'off_Damage_rel', 'off_Damage_abs');
                     break;
             } 
         }
-        return roundDefense;  
+        return roundDamage;  
     }
     
     addValueAndConsiderScaling(card, roundDefense, relativeKey, absoluteKey){ 

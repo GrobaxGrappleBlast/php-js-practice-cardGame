@@ -36,7 +36,7 @@
         if(isset($_POST["NewGame"])) {
             $GameRunning = true;    
             $player1 = input_sanitization($_POST['player1']);
-            $player2 = input_sanitization($_POST['player2']);
+            $player2 = input_sanitization($_POST['AI']);
             
             if($player1 == $player2){
                 $player2 = $player2 . "2";
@@ -52,14 +52,17 @@
     function createStartForm(){
         return '
         <form method="post" action="" class="InputForm" >
+            
             <label for="player1">player 1</label>
             <input type="text" id="player1" name="player1" value="player1"><br>
           
-            <label for="player2">player 2</label>
-            <input type="text" id="player2" name="player2" value="player2"><br>
+            <label for="AI">AI</label>
+            <input type="text" id="AI" name="AI" value="AI"><br>
           
             <input type="submit" name="NewGame" value="Start Game">
-        </form>';
+        
+        </form>
+        ';
     } 
     function createResetButton(){
         return '

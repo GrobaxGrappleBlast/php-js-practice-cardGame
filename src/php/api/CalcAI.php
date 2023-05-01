@@ -20,8 +20,7 @@
     if($requestBody == null){
         $DTO = json_decode($JSON, true); 
     }else{
-        $DTO = json_decode($requestBody, true);
-        
+        $DTO = json_decode($requestBody, true); 
     }
 
     $oponents = Array();
@@ -31,7 +30,7 @@
 
     $AIPlayer = Player::createFromJSON( $DTO["player"] );  
     $currentState = GameState::CreateFirstGameState( $AIPlayer , $oponents );
-    $nextState = AlgorithmSolver::minimax( $currentState , 2); 
+    $nextState = AlgorithmSolver::minimax( $currentState , 3); 
 
     print_r(json_encode(new moveFormat($nextState->state)));
 ?>
