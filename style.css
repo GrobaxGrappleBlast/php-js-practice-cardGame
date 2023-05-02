@@ -2,53 +2,103 @@
   list-style: none;
 }
 
+.BasicCard {
+  aspect-ratio: 0.8;
+  border: 5px solid rgba(0, 0, 0, 0.0509803922);
+  border-radius: 5px;
+  pointer-events: all;
+  position: relative;
+}
+.BasicCard .card_roundCounter {
+  position: absolute;
+  background-color: #eeeeca;
+  right: -5px;
+  bottom: -5px;
+  border: solid #575757 2px;
+  border-radius: 3px;
+  padding: 5px;
+  aspect-ratio: 1;
+  font-size: 10px;
+}
+
+.OFFENSIVE_CARD {
+  border: 5px solid #893030;
+}
+
+.DEFENSIVE_CARD {
+  border: 5px solid #2d4367;
+}
+
 .Layer {
+  pointer-events: none;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
 }
-
-.Board {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: space-around;
-  flex-direction: column-reverse;
-}
-.Board .DeckTable {
-  margin: auto;
-}
-
-.DeckHandTable {
-  margin: auto;
-  display: flex;
-  justify-content: center;
-  height: 100px;
-}
-.DeckHandTable .BasicCard {
-  margin-left: -30px;
-  transform-origin: center center;
-  transform: translate(0px, 0px);
-}
-
-.BoardDeck {
-  background-color: darkcyan;
-}
-
-.BasicCard {
-  height: 100px;
-  width: 80px;
-  border: 2px solid rgba(0, 0, 0, 0.0509803922);
-  pointer-events: all;
-}
-
-.Layer {
-  pointer-events: none;
-}
 .Layer > * {
   pointer-events: all;
+}
+
+.InputForm {
+  width: 250px;
+  height: 300px;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 2px 2px 8px 2px rgba(0, 0, 0, 0.1882352941);
+  margin: auto;
+  margin-top: 50px;
+  padding: 25px;
+  font-size: 20px;
+}
+
+.CardRow {
+  display: flex;
+  flex-wrap: nowrap;
+}
+.CardRow > div {
+  flex-basis: 25%;
+}
+
+.PlayerContainer {
+  padding: 10px;
+}
+
+.NON_INTERACTIVE {
+  pointer-events: none;
+}
+.NON_INTERACTIVE > * {
+  pointer-events: none;
+}
+
+.INVISIBLE {
+  opacity: 0;
+}
+
+.InnerHealthBar {
+  height: 100%;
+  background-color: brown;
+  float: left;
+  margin-bottom: -100%;
+  transition: 2s;
+  transition-timing-function: cubic-bezier(0.37, -0.01, 0.47, 1.01);
+}
+
+.PlayerHealthBar {
+  height: 30px;
+  background-color: white;
+  border-radius: 5px;
+  float: none;
+  position: relative;
+}
+.PlayerHealthBar .PlayerNameHeader {
+  position: absolute;
+  float: left;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  margin-top: -1%;
 }
 
 /*# sourceMappingURL=style.css.map */

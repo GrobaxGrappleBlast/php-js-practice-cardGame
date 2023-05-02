@@ -1,76 +1,127 @@
-import { Card , Dock , BoardSide, Constants, Player} from './main.js'
-
-
-class GameModelView{ 
-
-    board;
-    gameLayer;
-    players = [];
-
-    constructor(gameLayer){
-        this.gameLayer = gameLayer;
-        this.board = document.createElement("div");
-        this.board.classList.add(Constants.BOARD_CLASS);
-        this.gameLayer.appendChild(this.board);
-    }
-
-
-} 
+import { Card, Constants ,apiCaller,  DraggingHandler, Player, HumanPlayer,AIPlayer} from './main.js';
 
 export class Game{
-    
-    constructor( gameLayerId ){ 
-        let gameLayer = document.getElementById(gameLayerId);
-        if(gameLayer == null)
-            alert("No Game Layer Was Found by id ==[" + gameLayerId+ "]"); 
-        this.model = new GameModelView(gameLayer); 
+ 
+    static instance;
+    static getInstance(){
+        if(Game.instance == null){
+            Game.instance = new Game();
+        }
+        return Game.instance;
     }
-    
-    start( num_players, rounds , cards_in_deck ){
-        for (let index = 0; index < num_players; index++) {
-            this.model.players.push( new Player(this.model.board, rounds) ) 
+
+    players = []
+    registerPlayerBoard( board , name ){
+        let player = new HumanPlayer(board, name,300);
+        this.players.push(player);
+    }
+
+    registerAIPlayerBoard( board ){
+        let player = new AIPlayer(board, name,300);
+        this.players.push(player);
+    }
+
+    async start(rounds){ 
+        
+        // creating cards
+        let offensive_cards = await apiCaller.CallGetCards_Offensive( this.players.length * rounds );
+        let defensive_cards = await apiCaller.CallGetCards_Defensive( this.players.length * rounds );
+
+        // Give Players Cards;
+        for (let i = 0; i < this.players.length ; i++) {
+            let offCards = [];
+            let defCards = [];
+            
+            let _ = offensive_cards.splice(0, 8);
+
+            _.forEach( card => {
+                let a = JSON.stringify(card);
+                let b = Card.fromJSON(a);
+                offCards.push( Card.fromJSON( JSON.stringify(card) ) );
+            });
+
+            _ = defensive_cards.splice(0, 8);
+            
+            _.forEach( card => {
+                let a = JSON.stringify(card);
+                let b = Card.fromJSON(a);
+                defCards.push( Card.fromJSON( JSON.stringify(card) ) );
+            });
+
+            this.players[i].addCardsToHand(  offCards);
+            this.players[i].addCardsToHand(  defCards ); 
+            this.players[i].deactivate();  
+        } 
+ 
+        // Start Rounds
+        this.startGameLoop(rounds);
+    }
+
+    currentPlayer;
+    async startGameLoop(rounds){
+
+        let playerQueue = [];
+        for( let i = 0; i < this.players.length; i++ ){
+            playerQueue.push(this.players[i]);
         }
 
-        this.model.players.forEach(player => {
-            let json = `[
-                {
-                    "type"    : "anyType",
-                    "value"   : "1",
-                    "command" : "1"
-                },
-                {
-                    "type"    : "anyType",
-                    "value"   : "2",
-                    "command" : "1"
-                },
-                {
-                    "type"    : "anyType",
-                    "value"   : "3",
-                    "command" : "1"
-                },
-                {
-                    "type"    : "anyType",
-                    "value"   : "4",
-                    "command" : "1"
-                },
-                {
-                    "type"    : "anyType",
-                    "value"   : "5",
-                    "command" : "1"
-                },
-                {
-                    "type"    : "anyType",
-                    "value"   : "6",
-                    "command" : "1"
-                }    
-            ]`;
-            let obj = JSON.parse(json);
-  
-            obj.forEach( objCard => {
-                let card =  Card.fromJSON( JSON.stringify(objCard) );
-                console.log(card);
-                player.giveCard( card );
-            }); 
-        }); 
-    } 
+        for (let r = 0; r < rounds; r++) { 
+            //console.log("ROUND " + ( r + 1) +" BEGIN!") ;  
+             
+            // All Players Are allowed to Pick Cards
+            for( let i = 0; i < this.players.length; i++ ){
+                //console.log("PLAYER " + (i+1))
+                // Select A player and Unlock The Board;
+                this.currentPlayer = this.players[i];
+                this.currentPlayer.activate();
+
+                // Let the Player have their turn;
+                await this.currentPlayer.takeTurn();
+                this.currentPlayer.deactivate();
+            }
+              
+            // Calculate all players defense 
+            for( let i = 0; i < this.players.length; i++ ){
+                this.players[i].calc_defense();
+            }
+
+            // After The Rounds the game Calculates Damage
+            // Damage every player
+            let attackingPlayer;
+            let target;
+            let attack; 
+            for (let i = 0; i < this.players.length; i++) { 
+                attackingPlayer = playerQueue.shift(); 
+                attack = attackingPlayer.calc_offense();
+                for (let a = 0; a < playerQueue.length; a++) {
+                    target = playerQueue.shift();
+                    target.takeDamage(attack, a == 0);
+
+                    if(target.isDead()){
+                        alert(" Game is Over ");
+                    }
+                    
+                    playerQueue.push(target);
+                } 
+                playerQueue.push(attackingPlayer);
+                attackingPlayer.calc_downCards();
+            }
+
+        }
+    }
+ 
+    getOpponents( exceptionPlayerName = "" ){
+        let oponents = [];
+        for (let i = 0; i < this.players.length; i++) {
+            const player = this.players[i];
+            if(player.name == exceptionPlayerName)
+                continue;
+            
+            oponents.push(player);
+        }
+        return oponents;
+    }
+
 }
+ 
+ 

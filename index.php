@@ -1,3 +1,4 @@
+ 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,70 +9,39 @@
     <link href="style.css" rel="stylesheet" type="text/css">
     <?php
         // dependencies; 
-        require_once 'src/constants.php'; 
-        
-        // Writing the constants as Javascript constants
-        CreateJavaScriptConstants();
+        require_once 'src/php/core/constants.php'; 
+        require_once 'src/php/htmlGen/PlayerBoard.php';    
     ?>
     
-    <script>
-        /*/ TODO FINISH THIS CODE AND TEST.     
-        document.addEventListener("dragover", function(event) {
-			event.preventDefault();
-		});
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // Draging  -- Draging  -- Draging  -- Draging  --
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        let dragged = null ;
-        // when the event starts, take the element, remove it from its parent, and add to free elements on the screen
-        // then ensure that it follows the mouse cursor around. 
-        document.addEventListener("dragstart", function(event) {
-            // if the class drag is in the elements classes;
-            if (event.target.classList.contains( <?php echo GRAP_CLASS ?> ) ) {
-                dragged = event.target;
-			    event.target.classList.add(<?php echo DRAG_CLASS ?>);
-			}
-		});
-
-        // when the dragging ends, ensure that either the Drop happens, OR return to parent, and. 
-		document.addEventListener("dragend", function(event) {
-            // if the class drag is in the elements classes;
-            if (event.target.classList.contains( <?php echo GRAP_CLASS ?> ) ) {
-                dragged = event.target;
-			    event.target.classList.add(<?php echo DRAG_CLASS ?>);
-			} 
-		});
-
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-        // Docking  -- Docking  -- Docking  -- Docking  -- 
-        // -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-		document.addEventListener("drop", function(event) {
-			event.preventDefault();
-			if (event.target.className == <?php echo DOCK_CLASS ?>) {
-				event.target.style.border = "solid 1px black";
-				event.target.appendChild(dragged);
-			}
-		});
-        */
-    </script>
-     
+    
     <script>
 
         var game_has_started = false;
     <?php
 
-        $GameRunning = false;
-        session_start();
-        if(isset($_POST["Reset"])) {
-            $_SESSION = array();
-            $GameRunning = false;
-            echo 'game_has_started = false;';
+        function input_sanitization($input){
+            $out = $input; 
+            $out = strip_tags($out); 
+            $out = htmlentities($out); 
+            $length = mb_strlen($out, 'UTF-8');
+            $out = mb_substr($out, 0, 25, 'UTF-8');
+            return $out;
+        }
+ 
+        $GameRunning = false; 
+        if(isset($_POST["Reset"])) { 
+            $GameRunning = false; 
         }  
 
         if(isset($_POST["NewGame"])) {
-            $GameRunning = true;
-            echo 'game_has_started = true;';
+            $GameRunning = true;    
+            $player1 = input_sanitization($_POST['player1']);
+            $player2 = input_sanitization($_POST['AI']);
+            
+            if($player1 == $player2){
+                $player2 = $player2 . "2";
+            }
+        
         } 
     ?>
     </script>
@@ -81,11 +51,18 @@
     <?php
     function createStartForm(){
         return '
-        <form method="post" action="">
+        <form method="post" action="" class="InputForm" >
+            
             <label for="player1">player 1</label>
-            <input type="text" id="player1" name="player1"><br>
+            <input type="text" id="player1" name="player1" value="player1"><br>
+          
+            <label for="AI">AI</label>
+            <input type="text" id="AI" name="AI" value="AI"><br>
+          
             <input type="submit" name="NewGame" value="Start Game">
-        </form>';
+        
+        </form>
+        ';
     } 
     function createResetButton(){
         return '
@@ -94,23 +71,29 @@
         </form>
         ';
     }
-    echo '
-    <div id="'.LAYER_BOARD_CLASS         .'" class="'.COMMON_LAYER_CLASS.'"></div>
-    <div id="'.LAYER_VFX_CLASS           .'" class="'.COMMON_LAYER_CLASS.'"></div>
-    <div id="'.LAYER_UI_Messages         .'" class="'.COMMON_LAYER_CLASS.'"></div>
+    function createPlayerBoard($playerid, $slots, $playerName){
+        return ' '. generatePlayerAndBoard($playerid, $slots, $playerName, false) .' ';
+    }
+    function createPlayerAIBoard($playerid, $slots, $playerName){
+        return ' '. generatePlayerAndBoard($playerid, $slots, $playerName, true) .' ';
+    }
+
+    echo ' <div id="'.LAYER_BOARD_CLASS         .'" class="'.COMMON_LAYER_CLASS.'"> ';
+    if($GameRunning){
+        echo createPlayerBoard("Player1",8, $player1);
+        echo createPlayerAIBoard("Player2",8, $player2);  
+    }
+    echo '</div>
     <div id="'.LAYER_TOPMessages         .'" class="'.COMMON_LAYER_CLASS.'">'. (!$GameRunning ?   createStartForm() : createResetButton()) .'</div>
     '; 
     ?>
 
-        <script type="module" >
-            import { Game } from '/src/js/Game.js';
+    <script type="module">
+        import { Game } from './src/js/main.js';
 
-            if(game_has_started){
-                var boardClass = '<?php echo LAYER_BOARD_CLASS ?>';
-                var game = new Game( boardClass);
-                game.start(2 , 8);
-            }
+        let game = Game.getInstance();
+        game.start(25);
 
-        </script>
+    </script>
 </body>
 </html>

@@ -1,9 +1,11 @@
-import { Card } from './Card.js';
+import { Card , CardTarget, CardType, CardScale} from './Card.js';
 import { Dock } from './Dock.js';
-import {BoardSide} from './BoardSide.js'; 
-import {Game} from './Game.js'
-import {Player} from './player.js'
+import {PlayerBoard} from './PlayerBoard.js';  
+import {Game} from './Game.js';  
 import {DraggingHandler} from './behaviour/DraggingHandler.js'
+import {Player, HumanPlayer,AIPlayer} from './player.js';
+import {generalMethods} from './behaviour/general.js'
+import {apiCaller} from './apiCaller/apiCaller.js'
 
 const Constants = { 
     // Functionality Classes
@@ -35,4 +37,4 @@ const Constants = {
 }
 
 
-export {Game, Card, Dock, BoardSide, Constants , Player, DraggingHandler};
+export {CardTarget, CardType, CardScale,AIPlayer,HumanPlayer,Game, Card, Dock, PlayerBoard, Constants ,DraggingHandler,Player, generalMethods, apiCaller};

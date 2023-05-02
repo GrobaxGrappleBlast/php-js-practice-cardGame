@@ -1,3 +1,10 @@
+<<<<<<< HEAD
 ./node_modules
 opgave.txt
 opgaveAnalyse.txt
+=======
+node_modules/
+opgave.txt
+opgaveAnalyse.txt
+.vscode
+>>>>>>> reArchitechture
