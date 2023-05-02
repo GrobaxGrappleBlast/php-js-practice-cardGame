@@ -1,10 +1,11 @@
-import { Card , Dock , CardType, Constants} from './main.js'
+import { Card , Dock , CardType, Constants, generalMethods } from './main.js'
  
 class PlayerBoard_model { 
 
     offensive_row;
     defensive_row;
     handCards; 
+    health;
 
     constructor( slots = 1 ){
         this.offensive_row = new Array(slots);
@@ -59,17 +60,18 @@ class PlayerBoard_View {
     defensive_row; 
     hand ; 
     healthbar;
+    healthContainer;
 
-    constructor( container, healthbar ,offensive_row, defensive_row, hand ){
+    constructor( container, healthbar ,offensive_row, defensive_row, hand , healthContainer){
         this.healthbar =healthbar;
         this.container       = container       ;
         this.offensive_row   = offensive_row   ;
         this.defensive_row   = defensive_row   ; 
         this.hand            = hand            ; 
+        this.healthContainer = healthContainer;
     } 
     
-    render(model){
- 
+    createCards(model){
         model.offensive_row.forEach( dock => {
             this.offensive_row.appendChild(dock.asHTML());
         });
@@ -77,20 +79,23 @@ class PlayerBoard_View {
         model.defensive_row.forEach( dock => {
             this.defensive_row.appendChild(dock.asHTML());
         });
-
-
+ 
         model.handCards.forEach( card => {
             card.dockAt(this.hand);
         });
+    }
+    renderhealth(model){ 
+        this.healthContainer.innerHTML = model.health + "";
     }
 
     setHealthWidth(healthCurrent, healthOriginal){
 
         let percent = (healthCurrent/healthOriginal)*100;
         percent = percent < 0 ? 0 : percent;
-        percent = percent > 100 ? 100 : percent;
-        console.log("WIDTH SET TO " + percent + " PERCENT ");
+        percent = percent > 100 ? 100 : percent; 
         this.healthbar.style.width = percent + '%';
+
+        
     }
 
     addToHand(card){
@@ -127,11 +132,11 @@ export class PlayerBoard {
     model;
     view ; 
 
-    static CreatePlayerBoard(container, healthbar, OffRow, DefRow, HandRow, slots, json = "" ){
+    static CreatePlayerBoard(container, healthbar, OffRow, DefRow, HandRow,healthContainer, slots, json = "" ){
         let board   = new PlayerBoard();
-        board.view  = new PlayerBoard_View(container,healthbar,OffRow,DefRow,HandRow);
+        board.view  = new PlayerBoard_View(container,healthbar,OffRow,DefRow,HandRow,healthContainer);
         board.model = new PlayerBoard_model( slots );
-        board.view.render(board.model) 
+        board.view.createCards(board.model) 
         return board;
     } 
 
@@ -229,7 +234,51 @@ export class PlayerBoard {
     }
 
     setHealthWidth(healthCurrent, healthOriginal){
-        this.view.setHealthWidth(healthCurrent,healthOriginal);
+        this.view.setHealthWidth(healthCurrent,healthOriginal); 
+        this.setHealth(healthCurrent, true);
     }
+    async setHealth(health, animatethis=false){
+         
+        if(!animatethis){
+            this.model.health = health;
+            this.view.renderhealth(this.model); 
+            return;
+        }
+        else{
+            let old_health = this.model.health;
+            let delta  = old_health - health;
+            let steps = 20;
+            let time = 2000; // miliseconds; 
+
+            console.log(`
+                delta   = ${delta},
+                steps   = ${steps},
+                wait    = ${time/steps},
+            `);
+            const Temp = await this.incrementHealth(old_health,  delta / steps, steps, time/steps, 1 ); 
+            //this.model.health = health;
+            //this.view.renderhealth(this.model); 
+        }
+    }
+    async incrementHealth( old_health, increment ,iterations, wait ,iteration ){
+        
+        console.log(`
+            oldHealth: ${old_health}
+        `);
+
+        await generalMethods.sleep(wait);
+        old_health += increment;
+        this.model.health = old_health;
+        this.view.renderhealth(this.model);
+
+        if(iterations == iteration){            
+            console.log("END \n\n\n\n");
+            return true;
+        }else{
+            return await this.incrementHealth(old_health, increment, iterations, wait, iteration +1  )
+        }
+    }
+
+
    
 }   

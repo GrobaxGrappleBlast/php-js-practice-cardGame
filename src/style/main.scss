@@ -1,34 +1,59 @@
 
+@import "functions";
+$CARD_BORDER_SIZE: 4px;
+:root {
+    --card-border-thickness: #{$CARD_BORDER_SIZE};
+} 
+$cardBorderSize: var(--card-border-thickness);
+
 *{
     list-style: none;
 } 
+
+
 .BasicCard{
-    //max-height:100px;
-    //max-width:80px;
+     
     aspect-ratio: 0.8; 
-    border: 5px solid #0000000d; 
+    border-width: $cardBorderSize ; 
+    border-style: dotted;
     border-radius: 5px;
-    pointer-events: all;
+    border-color:#0000000d;
+    pointer-events: all; 
+    background-color: white;
+    font-size: 65%;
+    padding: 5px; 
     position: relative;
-    //float:left;
 
     .card_roundCounter{
-        position: absolute;
-        background-color: #eeeeca;
-        right: -5px;
-        bottom: -5px;
-        border: solid #575757 2px;
-        border-radius: 3px;
-        padding: 5px;
-        aspect-ratio: 1;
+        position: absolute; 
+        right:  -$CARD_BORDER_SIZE;
+        bottom: -$CARD_BORDER_SIZE;
+        //border-width: $cardBorderSize;
+        //border-style: inherit;
+        //border-color:inherit;
+        //background-color: inherit;
+        color:inherit;
+        border-radius: 5px;
+        padding: 5px; 
         font-size: 10px;
     }
 }
 .OFFENSIVE_CARD{
-    border: 5px solid #893030;
+    border-style: solid;
+    border-width: $cardBorderSize  ;
+    border-color: #893030;
 }
 .DEFENSIVE_CARD{
-    border: 5px solid #2d4367;
+    border-style: solid;
+    border-width: $cardBorderSize  ;
+    border-color: #2d4367;
+}
+.DEAD_CARD{
+    border-style: solid;
+    border-width: $cardBorderSize ; 
+    border-color: #b4b4b4;
+    color: #9d9d9d;
+    background-color: #d1d1d1; 
 }
 
 
@@ -79,32 +104,50 @@
     opacity: 0;
 }
 
-.InnerHealthBar{
-    height:100%; 
-    background-color: brown;
-    float:left;
-    margin-bottom: -100%;
 
-    transition: 2s;
-    transition-timing-function: cubic-bezier(0.37,-0.01, 0.47, 1.01);
-    }
 .PlayerHealthBar{
-    
+
+    box-shadow: inset 0 0 10px #0000006b;
     height:30px;
-    background-color: white;
+    background-color: rgb(166, 166, 166);
     border-radius: 5px; 
     float:none;
     position:relative;
-
-
+    overflow:hidden;
+ 
+    .InnerHealthBar{
+        box-shadow: inset 0 0 10px #0000006b;
+        height:100%; 
+        background-color: brown;
+        float:left; 
     
-    .PlayerNameHeader{
+        transition: 2s;
+        transition-timing-function: cubic-bezier(0.37,-0.01, 0.47, 1.01);
+    }
+
+    .HealthBar_TextContainer{ 
+        
         position:absolute;
-        float:left;
-        margin:auto;
+        left:0;
+        top:0;
+        float:left; 
+        margin-left:2%;
         padding:0;
         border:0; 
-        margin-top: -1%;
+        height:100%;
+        width:50%;  
+
+        display:flex;
+        flex-direction: row;
+        justify-content: space-between;
+
+        * {
+            height:100%;
+            margin:0;
+            padding:0;
+            border:0;  
+            color:white;
+        }
     }
 
 }

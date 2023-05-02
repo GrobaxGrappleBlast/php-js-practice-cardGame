@@ -12,11 +12,8 @@
         require_once 'src/php/core/constants.php'; 
         require_once 'src/php/htmlGen/PlayerBoard.php';    
     ?>
-    
-    
-    <script>
-
-        var game_has_started = false;
+     
+     
     <?php
 
         function input_sanitization($input){
@@ -28,24 +25,40 @@
             return $out;
         }
  
+        function number_interprate($number, $max , $min ){
+            if($number < 0)
+                $number = $number * -1;
+
+            if($number < $min)
+                $number = $min;
+
+            if($number > $max)
+                $number =  $max;
+            
+            return $number;
+        }
+
         $GameRunning = false; 
         if(isset($_POST["Reset"])) { 
             $GameRunning = false; 
-        }  
+        }   
 
         if(isset($_POST["NewGame"])) {
             $GameRunning = true;    
             $player1 = input_sanitization($_POST['player1']);
             $player2 = input_sanitization($_POST['AI']);
-            
+            $rounds         = number_interprate(intval($_POST['Rounds']), 10, 1);
+            $generalHealth  = number_interprate(intval($_POST['health']), 1000, 100);
+
             if($player1 == $player2){
                 $player2 = $player2 . "2";
-            }
-        
+            } 
         } 
-    ?>
+    ?> 
+     <script type="module">
+        import { Game } from './src/js/main.js'; 
+        Game.getFirstInstance(<?=$generalHealth?>);
     </script>
-
 </head>
 <body>
     <?php
@@ -55,12 +68,18 @@
             
             <label for="player1">player 1</label>
             <input type="text" id="player1" name="player1" value="player1"><br>
-          
+
             <label for="AI">AI</label>
             <input type="text" id="AI" name="AI" value="AI"><br>
-          
+
+            <label for="rounds">Max Rounds "n"</label>
+            <input type="number" id="Rounds" name="Rounds" value="8" min="1" max="10" ><br>
+            
+            <label for="health">start Health "m"</label>
+            <input type="number" id="health" name="health" value="300" min="10" max="1000" ><br>
+
             <input type="submit" name="NewGame" value="Start Game">
-        
+
         </form>
         ';
     } 
@@ -80,8 +99,8 @@
 
     echo ' <div id="'.LAYER_BOARD_CLASS         .'" class="'.COMMON_LAYER_CLASS.'"> ';
     if($GameRunning){
-        echo createPlayerBoard("Player1",8, $player1);
-        echo createPlayerAIBoard("Player2",8, $player2);  
+        echo createPlayerBoard(     "Player1", $rounds, $player1 );
+        echo createPlayerAIBoard(   "Player2", $rounds, $player2 );  
     }
     echo '</div>
     <div id="'.LAYER_TOPMessages         .'" class="'.COMMON_LAYER_CLASS.'">'. (!$GameRunning ?   createStartForm() : createResetButton()) .'</div>
@@ -89,11 +108,9 @@
     ?>
 
     <script type="module">
-        import { Game } from './src/js/main.js';
-
+        import { Game } from './src/js/main.js'; 
         let game = Game.getInstance();
-        game.start(25);
-
+        game.start(<?= $rounds ?>); 
     </script>
 </body>
 </html>

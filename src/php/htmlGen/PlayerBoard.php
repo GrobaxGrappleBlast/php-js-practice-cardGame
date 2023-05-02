@@ -13,7 +13,7 @@
  ?>
 <span>
     <div class="<?php echo $ContainerClass ?>" id="<?php  echo $playerId ?>">
-            <div class="<?php echo $healthBar ?>"><div class="<?php echo $InnerHealthBar ?>"></div><span class="PlayerNameHeader"><h3><?= $playerName?></h3></span></div>
+            <div class="<?php echo $healthBar ?>"><div class="<?php echo $InnerHealthBar ?>"></div><div class="HealthBar_TextContainer"><p><?= $playerName?></p><p class="PlayerHealthTextContainer" > </p></div></div>
             <div class="<?php echo $CardRow ." ".$OffCardRow  ?>">
                 
             </div>
@@ -35,10 +35,12 @@
         let OffRow      = element.querySelector(".OffensiveCardRow");
         let DefRow      = element.querySelector(".DefensiveCardRow");
         let handRow     = element.querySelector(".HandRow");
+        let HealthText = element.querySelector(".PlayerHealthTextContainer");
+        console.log("HealthText");
+        console.log(HealthText);
 
-        InnerhealthBar.style.width = '100%';
-
-        let playerBoard = PlayerBoard.CreatePlayerBoard(element,InnerhealthBar,OffRow,DefRow,handRow,<?php echo $slots ?>);
+        InnerhealthBar.style.width = '100%'; 
+        let playerBoard = PlayerBoard.CreatePlayerBoard(element,InnerhealthBar,OffRow,DefRow,handRow,HealthText,<?php echo $slots ?>);
         <?php 
             if($isAI){
                 ?>

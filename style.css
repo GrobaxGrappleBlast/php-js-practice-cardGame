@@ -1,32 +1,51 @@
+:root {
+  --card-border-thickness: 4px;
+}
+
 * {
   list-style: none;
 }
 
 .BasicCard {
   aspect-ratio: 0.8;
-  border: 5px solid rgba(0, 0, 0, 0.0509803922);
+  border-width: var(--card-border-thickness);
+  border-style: dotted;
   border-radius: 5px;
+  border-color: rgba(0, 0, 0, 0.0509803922);
   pointer-events: all;
+  background-color: white;
+  font-size: 65%;
+  padding: 5px;
   position: relative;
 }
 .BasicCard .card_roundCounter {
   position: absolute;
-  background-color: #eeeeca;
-  right: -5px;
-  bottom: -5px;
-  border: solid #575757 2px;
-  border-radius: 3px;
+  right: -4px;
+  bottom: -4px;
+  color: inherit;
+  border-radius: 5px;
   padding: 5px;
-  aspect-ratio: 1;
   font-size: 10px;
 }
 
 .OFFENSIVE_CARD {
-  border: 5px solid #893030;
+  border-style: solid;
+  border-width: var(--card-border-thickness);
+  border-color: #893030;
 }
 
 .DEFENSIVE_CARD {
-  border: 5px solid #2d4367;
+  border-style: solid;
+  border-width: var(--card-border-thickness);
+  border-color: #2d4367;
+}
+
+.DEAD_CARD {
+  border-style: solid;
+  border-width: var(--card-border-thickness);
+  border-color: #b4b4b4;
+  color: #9d9d9d;
+  background-color: #d1d1d1;
 }
 
 .Layer {
@@ -76,29 +95,43 @@
   opacity: 0;
 }
 
-.InnerHealthBar {
-  height: 100%;
-  background-color: brown;
-  float: left;
-  margin-bottom: -100%;
-  transition: 2s;
-  transition-timing-function: cubic-bezier(0.37, -0.01, 0.47, 1.01);
-}
-
 .PlayerHealthBar {
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4196078431);
   height: 30px;
-  background-color: white;
+  background-color: rgb(166, 166, 166);
   border-radius: 5px;
   float: none;
   position: relative;
+  overflow: hidden;
 }
-.PlayerHealthBar .PlayerNameHeader {
-  position: absolute;
+.PlayerHealthBar .InnerHealthBar {
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4196078431);
+  height: 100%;
+  background-color: brown;
   float: left;
-  margin: auto;
+  transition: 2s;
+  transition-timing-function: cubic-bezier(0.37, -0.01, 0.47, 1.01);
+}
+.PlayerHealthBar .HealthBar_TextContainer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  float: left;
+  margin-left: 2%;
   padding: 0;
   border: 0;
-  margin-top: -1%;
+  height: 100%;
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.PlayerHealthBar .HealthBar_TextContainer * {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: white;
 }
 
 /*# sourceMappingURL=style.css.map */

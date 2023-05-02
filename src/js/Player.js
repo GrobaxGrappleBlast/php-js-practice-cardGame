@@ -15,11 +15,9 @@ class PlayerRoundDamage{
     off_Bonus_abs  = 0;
     constructor(){}
 }  
-
-
+ 
 export class Player{
-    
-        
+     
     offensiveCards = [];
     defensiveCards = [];
     name;
@@ -33,7 +31,13 @@ export class Player{
         this._health =health;
         this._originalHealth = health;
         this.name = name;
-        this.board = playerBoard;
+        this.board = playerBoard; 
+        this.board.setHealth(health, false) 
+    }
+
+    setOriginalHealth(health ){
+        this._originalHealth = health;
+        this._health = health;
     }
 
     async takeTurn(){
@@ -108,35 +112,41 @@ export class Player{
         //console.log(`DAMAGE REL ${relativeDamage} ABS ${absoluteDamage} RES ${relativeDamage + absoluteDamage} OFFENSE ${offense}`)
         health_cur -= (relativeDamage + absoluteDamage); 
         this._health = health_cur;
-
+        this.board.model.health = this._health; 
         this.board.setHealthWidth(this._health , this._originalHealth);
     }
 
     calc_downCards(){
         // count down card rounds : DEFENSIVE
         for (let i=0; i < this.defensiveCards.length ; i++) {  
+
             let card = this.defensiveCards[i]; 
+            if(!card.isAlive())
+                continue;
+            
             card.model.rounds -= 1;
-            if(card.model.rounds == 0){
-                card.kill();
+            if(card.model.rounds == 0){ 
                 this.defensiveCards.splice(i, 1); 
-                //destroy(card);
             } else{
-                card.update();
+                
             }   
+            card.update();
         }
 
         // count down card rounds : OFENSIVE
         for (let i=0; i < this.offensiveCards.length ; i++) {  
-            let card = this.offensiveCards[i];
+
+            let card = this.offensiveCards[i]; 
+            if(!card.isAlive())
+                continue;
+
             card.model.rounds -= 1;
-            if(card.model.rounds == 0){
-                card.kill();
+            if(card.model.rounds == 0){ 
                 this.offensiveCards.splice(i, 1); 
-                //destroy(card);
             }else{
-                card.update();
+               
             } 
+            card.update();
         }
     }
     
@@ -145,7 +155,11 @@ export class Player{
         let roundDefense = new PlayerRoundDefense(); 
         // Every card needs to be added. 
         for ( let i=0; i < this.defensiveCards.length ; i++) {  
+
             let card = this.defensiveCards[i];
+            if(card != undefined && !card.isAlive())
+                continue;
+            
             switch(card.model.target){
                 case CardTarget.SELF:
                     // interpreted as Healing for Self, thats why a defensive target is self.
@@ -165,7 +179,11 @@ export class Player{
         let roundDamage = new PlayerRoundDamage(); 
         // Every card needs to be added. 
         for ( let i=0; i < this.offensiveCards.length ; i++) {  
+            
             let card = this.offensiveCards[i];
+            if(!card.isAlive())
+                continue;
+ 
             switch(card.model.target){
                 case CardTarget.SELF:
                     // Calculate as Bonus damage

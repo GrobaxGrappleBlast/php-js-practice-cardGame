@@ -42,33 +42,35 @@ class CardView{
     explaination    = document.createElement("div");
     damageContainer = document.createElement("div");
 
-    constructor(){
+    constructor(model){
         // add Class 
         this.element.classList.add(Constants.CARD_CLASS); 
         this.element.appendChild(this.roundCounter);
         this.element.appendChild(this.explaination);
         this.element.appendChild(this.damageContainer);
-
-
         this.roundCounter.classList.add("card_roundCounter");
 
-    }
-
-    render(model){ 
-        
         if(model.cardType == 0)
             this.element.classList.add(Card.OffensiveCardClass);
         else 
             this.element.classList.add(Card.DefensiveCardClass);
+    }
+
+    render(model){ 
         
+        if(model.rounds == 0){
+            this.element.classList.remove(Card.OffensiveCardClass);
+            this.element.classList.remove(Card.DefensiveCardClass);
+            this.element.classList.add(Card.DeadCardClass);
+        } 
+
         this.roundCounter.innerHTML = model.rounds; 
         this.explaination.innerHTML =  this.handleType(model);
         this.damageContainer.innerHTML = this.handleDamageOutput(model);
 
         return;
     }
-
-
+ 
     handleType(model){
         if ( model.cardType == CardType.DEFENSIVE ){
             return (model.target == CardTarget.ENEMY )?
@@ -97,6 +99,7 @@ export class Card {
     
     static OffensiveCardClass = "OFFENSIVE_CARD";
     static DefensiveCardClass = "DEFENSIVE_CARD";
+    static DeadCardClass      = "DEAD_CARD" ; 
 
     dock  ;
     model ;
@@ -109,7 +112,7 @@ export class Card {
             this.model = CardModel.fromJSON(json);
         }
         
-        this.view = new CardView();
+        this.view = new CardView(this.model);
         this.view.render(this.model);
    
         DraggingHandler.addCardDragListeners(this);
@@ -142,16 +145,8 @@ export class Card {
         this.view.render(this.model);
     }
 
-    kill(){
-
-        if(this.dock != null){
-            if(this.dock instanceof Dock){  
-                this.dock.unOccupy();
-            } 
-        } 
-
-        this.view.element.remove();
-        
+    isAlive(){
+        return this.model.rounds > 0;
     }
 
 }
